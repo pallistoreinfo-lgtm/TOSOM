@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Other Side of Medicine — Website Rebuild Summary</title>
+<style>
+  :root {
+    --brand: #046bd2;
+    --brand-dark: #045cb4;
+    --navy: #2f5282;
+    --surface: #f0f5fa;
+    --ink: #1e293b;
+    --muted: #475569;
+    --line: #e2e8f0;
+    --green: #2e7d32;
+    --amber: #b45309;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background: #fff;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+  header {
+    background: linear-gradient(135deg, var(--brand), var(--navy));
+    color: #fff;
+    padding: 56px 0 48px;
+  }
+  header .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.85;
+    margin: 0 0 10px;
+  }
+  header h1 { margin: 0; font-size: 38px; line-height: 1.15; }
+  header p.sub { margin: 14px 0 0; font-size: 18px; opacity: 0.95; max-width: 640px; }
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin: 36px 0 0;
+  }
+  .stat {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .stat b { display: block; font-size: 28px; line-height: 1; }
+  .stat span { font-size: 13px; opacity: 0.9; }
+  section { padding: 40px 0; border-bottom: 1px solid var(--line); }
+  section:last-of-type { border-bottom: none; }
+  h2 { font-size: 24px; color: var(--navy); margin: 0 0 6px; }
+  h2 + .lede { margin: 0 0 22px; color: var(--muted); }
+  h3 { font-size: 17px; margin: 24px 0 6px; color: var(--ink); }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin: 14px 0;
+  }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  ul.clean { list-style: none; padding: 0; margin: 8px 0; }
+  ul.clean li { padding: 7px 0 7px 28px; position: relative; }
+  ul.clean li::before {
+    content: "";
+    position: absolute; left: 0; top: 12px;
+    width: 16px; height: 16px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 4px var(--green);
+  }
+  .before-after { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  .before-after th, .before-after td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); font-size: 14.5px; vertical-align: top; }
+  .before-after th { background: var(--surface); color: var(--navy); font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .before-after td.before { color: var(--muted); }
+  .before-after td.after { color: var(--ink); font-weight: 500; }
+  .pill {
+    display: inline-block; font-size: 12px; font-weight: 600;
+    padding: 2px 9px; border-radius: 999px; background: #e8f0fb; color: var(--brand-dark);
+  }
+  .pill.amber { background: #fef3e2; color: var(--amber); }
+  .pill.green { background: #e7f4e8; color: var(--green); }
+  .note {
+    border-left: 4px solid var(--amber);
+    background: #fffaf2;
+    padding: 14px 18px;
+    border-radius: 0 8px 8px 0;
+    margin: 16px 0;
+  }
+  code { background: var(--surface); padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+  footer { padding: 30px 0 50px; color: var(--muted); font-size: 14px; }
+  a { color: var(--brand-dark); }
+  @media (max-width: 680px) {
+    .stat-row { grid-template-columns: repeat(2, 1fr); }
+    .grid2 { grid-template-columns: 1fr; }
+    header h1 { font-size: 30px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <p class="eyebrow">Project Summary</p>
+    <h1>The Other Side of Medicine — Website Rebuild</h1>
+    <p class="sub">We rebuilt Dr. Krystosik's WordPress site as a fast, code-based website that an AI agent can keep updated — and fixed the SEO gaps holding the old site back along the way.</p>
+    <div class="stat-row">
+      <div class="stat"><b>153</b><span>content pieces migrated</span></div>
+      <div class="stat"><b>155</b><span>pages rebuilt</span></div>
+      <div class="stat"><b>169</b><span>images optimized</span></div>
+      <div class="stat"><b>~111KB</b><span>page weight (was much heavier)</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <h2>What we set out to do</h2>
+  <p class="lede">Two goals.</p>
+  <div class="grid2">
+    <div class="card">
+      <span class="pill">Goal 1</span>
+      <h3 style="margin-top:10px">Faithful recreation</h3>
+      <p style="margin:0;color:var(--muted)">Rebuild the site so it looks and reads like the same practice — same brand, content, navigation, and structure — without the WordPress and page-builder baggage.</p>
+    </div>
+    <div class="card">
+      <span class="pill">Goal 2</span>
+      <h3 style="margin-top:10px">Maintainable by an AI agent</h3>
+      <p style="margin:0;color:var(--muted)">Make every article and page a plain text file an agent (or a person) can edit directly — no page builder, no database, no developer required for routine updates.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>What we built</h2>
+  <p class="lede">A modern, code-based version of the site.</p>
+  <ul class="clean">
+    <li><b>Every article and page is now a simple content file.</b> 45 blog articles, 73 podcast episodes, and 35 pages were pulled from the old site and converted into clean, editable files. To update an article, you change one file — no clicking through a page builder.</li>
+    <li><b>The look and feel was faithfully recreated</b> — the same blue-and-navy brand, the full navigation menu, the hero, the three-step "Evaluate → Modify → Support" framework, patient case studies, conditions, lab tests, and the $79 consultation call-to-action.</li>
+    <li><b>Built on a professional component library</b> (shadcn/ui) themed to the practice's brand, so the site is consistent, accessible, and easy to extend.</li>
+    <li><b>All images were downloaded, optimized, and stored with the site</b> — no longer dependent on the old WordPress host, and lighter/faster than before.</li>
+    <li><b>The booking (Calendly) and gut-health quiz (JotForm) still work</b>, the podcast streams from its existing host, and the shop continues to link to the existing store.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>We also fixed the site's SEO</h2>
+  <p class="lede">A search audit of the live site scored it <b>72/100</b>. The rebuild was the perfect moment to fix the structural problems for free. Here's the before and after.</p>
+  <table class="before-after">
+    <tr><th>Issue (old site)</th><th>Before</th><th>After</th></tr>
+    <tr>
+      <td>Page headings</td>
+      <td class="before">Key pages had <b>zero</b> main headings (H1) — a top Google ranking signal was missing entirely.</td>
+      <td class="after">Exactly one keyword-led headline per page. Verified on all 155 pages.</td>
+    </tr>
+    <tr>
+      <td>Page titles</td>
+      <td class="before">"Home - THE OTHER SIDE OF MEDICINE" — wasted space, no keywords.</td>
+      <td class="after">"Functional Medicine for Gut Health &amp; Root-Cause Healing" — keyword-led, brand trimmed.</td>
+    </tr>
+    <tr>
+      <td>Search descriptions</td>
+      <td class="before">47 pages had missing or weak descriptions (many just repeated the title).</td>
+      <td class="after">Rewritten with a hook + call-to-action across every article and money page.</td>
+    </tr>
+    <tr>
+      <td>Sitemap</td>
+      <td class="before">robots.txt had no sitemap link; the common <code>/sitemap.xml</code> path returned an error.</td>
+      <td class="after">Proper sitemap generated and referenced for search engines.</td>
+    </tr>
+    <tr>
+      <td>Author credibility (health/YMYL)</td>
+      <td class="before">Doctor credentials only on the homepage — weak for medical search after Google's Dec 2025 update.</td>
+      <td class="after">Author credentials block + author markup on <b>every</b> article.</td>
+    </tr>
+    <tr>
+      <td>Page speed</td>
+      <td class="before">Render-blocking page-builder code; articles weighed 200–220&nbsp;KB.</td>
+      <td class="after">Static pages with minimal code (~111&nbsp;KB) — faster on mobile.</td>
+    </tr>
+  </table>
+</section>
+
+<section>
+  <h2>How updates work now</h2>
+  <p class="lede">This is the payoff: routine changes no longer need a developer or a WordPress login.</p>
+  <ul class="clean">
+    <li><b>Add an article:</b> create one content file with a title, summary, and the body. It appears on the site and in the article list automatically, with the author block and search markup already attached.</li>
+    <li><b>Change the menu, phone number, or a link:</b> edit one settings file — the single source of truth for the whole site.</li>
+    <li><b>Add a condition page or podcast episode:</b> copy an existing file and fill it in.</li>
+  </ul>
+  <p style="color:var(--muted)">An included guide (the project README) walks through each of these step by step.</p>
+</section>
+
+<section>
+  <h2>Before this goes live</h2>
+  <div class="note">
+    <b>One item needs a decision:</b> the email newsletter signup. The old form fed into WordPress, which is going away. The form is built and ready — it just needs to be pointed at wherever Dr. Krystosik's email list lives (Mailchimp, ConvertKit, etc.). Until then it's clearly marked as not-yet-connected so nothing breaks silently.
+  </div>
+  <p style="color:var(--muted)">Deployment, domain, and launch are handled by Dr. Krystosik's team. After launch, verifying the site in Google Search Console will start collecting real search-traffic data.</p>
+</section>
+
+<footer class="wrap">
+  Prepared as a plain-English summary of the rebuild of theothersideofmedicine.com.
+</footer>
+
+</div>
+</body>
+</html>
