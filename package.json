@@ -1,0 +1,52 @@
+{
+  "name": "tosm-site",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The Other Side of Medicine — agent-maintainable rebuild of theothersideofmedicine.com",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "extract": "tsx migration/extract.ts",
+    "extract:podcast": "tsx migration/podcast.ts",
+    "extract:media": "tsx migration/media.ts",
+    "extract:all": "tsx migration/extract.ts && tsx migration/podcast.ts && tsx migration/media.ts"
+  },
+  "dependencies": {
+    "@radix-ui/react-accordion": "1.2.3",
+    "@radix-ui/react-dialog": "1.1.6",
+    "@radix-ui/react-navigation-menu": "1.2.5",
+    "@radix-ui/react-slot": "1.1.2",
+    "@radix-ui/react-tabs": "1.1.3",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "gray-matter": "4.0.3",
+    "lucide-react": "0.511.0",
+    "next": "^15.5.4",
+    "next-mdx-remote": "5.0.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "tailwind-merge": "3.3.0",
+    "zod": "3.25.46"
+  },
+  "devDependencies": {
+    "@types/node": "22.15.29",
+    "@types/react": "19.1.6",
+    "@types/react-dom": "19.1.5",
+    "@types/turndown": "5.0.5",
+    "autoprefixer": "10.4.21",
+    "cheerio": "1.0.0",
+    "fast-xml-parser": "4.5.3",
+    "p-limit": "6.2.0",
+    "postcss": "8.5.4",
+    "sharp": "0.34.2",
+    "tailwindcss": "3.4.17",
+    "tailwindcss-animate": "1.0.7",
+    "tsx": "4.19.4",
+    "turndown": "7.2.0",
+    "turndown-plugin-gfm": "1.0.2",
+    "typescript": "5.8.3"
+  }
+}

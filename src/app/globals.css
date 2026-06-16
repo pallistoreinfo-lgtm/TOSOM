@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * shadcn theme variables mapped to The Other Side of Medicine brand tokens.
+ * Brand blue #046bd2 = hsl(210 96% 42%) | navy #2f5282 = hsl(217 47% 35%)
+ * surface #F0F5FA = hsl(210 43% 96%) | slate text #1e293b = hsl(217 33% 17%)
+ */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 217 33% 17%; /* slate-800 #1e293b */
+
+    --card: 0 0% 100%;
+    --card-foreground: 217 33% 17%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 217 33% 17%;
+
+    --primary: 210 96% 42%; /* brand blue #046bd2 */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 217 47% 35%; /* navy #2f5282 */
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 43% 96%; /* surface #F0F5FA */
+    --muted-foreground: 215 19% 35%; /* slate-600 #475569 */
+
+    --accent: 210 43% 96%;
+    --accent-foreground: 217 47% 35%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 20% 84%; /* slate-300 #D1D5DB-ish */
+    --input: 214 20% 84%;
+    --ring: 210 96% 42%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading;
+  }
+}
