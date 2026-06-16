@@ -123,6 +123,16 @@ export function htmlToMarkdown(html: string): { markdown: string; images: Set<st
 
   // Strip script/style and noise attributes.
   $("script, style, link, noscript").remove();
+
+  // Strip Elementor responsive-duplicate containers. Elementor renders separate
+  // desktop/tablet/phone copies of a section and hides the off-breakpoint ones
+  // with these classes; extracting all of them duplicates the content. Drop the
+  // hidden variants and keep one copy. (Done before [style]/[class] removal so
+  // the class selectors still match.)
+  $(
+    "[class*='elementor-hidden-tablet'], [class*='elementor-hidden-phone'], [class*='elementor-hidden-mobile'], [class*='elementor-hidden-desktop']",
+  ).remove();
+
   $("[style]").removeAttr("style");
   $("*").each((_, el) => {
     if (el.type !== "tag") return;
@@ -132,17 +142,30 @@ export function htmlToMarkdown(html: string): { markdown: string; images: Set<st
     }
   });
 
-  // Rewrite images to their original URL; collect for download.
+  // Unwrap placeholder/junk anchors (href="#", "javascript:", or empty). Elementor
+  // wraps whole content blocks in these; turndown would emit broken multi-line
+  // `[ ... ](#)` markdown. Keep the inner content, drop the link.
+  $("a").each((_, el) => {
+    const href = ($(el).attr("href") || "").trim();
+    if (href === "" || href === "#" || /^javascript:/i.test(href)) {
+      $(el).replaceWith($(el).contents());
+    }
+  });
+
+  // Rewrite images to a clean /assets/images/<rel> URL; collect originals for download.
   $("img").each((_, el) => {
     const $el = $(el);
     let src = $el.attr("src") || $el.attr("data-src") || "";
-    if (!src) return;
+    if (!src) {
+      $el.remove(); // empty <img> -> drop (avoids broken placeholder boxes)
+      return;
+    }
     if (src.startsWith("/")) src = SITE + src;
     const original = toOriginalImageUrl(src);
     if (/wp-content\/uploads/i.test(original)) {
       images.add(original);
-      const local = localImagePath(original);
-      if (local) $el.attr("src", "/" + path.relative(ROOT, local.abs).replace(/^src\/assets\//, "assets/"));
+      const m = original.match(/wp-content\/uploads\/(.+)$/i);
+      if (m) $el.attr("src", `/assets/images/${toOriginalImageUrl(m[1])}`);
     }
     $el.removeAttr("srcset").removeAttr("sizes").removeAttr("loading").removeAttr("decoding");
   });
@@ -156,13 +179,33 @@ export function htmlToMarkdown(html: string): { markdown: string; images: Set<st
   const cleaned = $.html();
   const markdown = escapeMdx(
     demoteHeadings(
-      turndown
-        .turndown(cleaned)
-        .replace(/\n{3,}/g, "\n\n")
-        .trim(),
+      collapseImageLinks(
+        turndown
+          .turndown(cleaned)
+          .replace(/\n{3,}/g, "\n\n")
+          .trim(),
+      ),
     ),
   );
   return { markdown, images };
+}
+
+/**
+ * Turndown splits Elementor's image-link cards across lines, leaving stray `[`
+ * and `](url)` that render as literal text:
+ *
+ *     [
+ *     ![](img.jpg)
+ *     ](https://real-url/)
+ *
+ * Rejoin them into a single inline image link: `[![](img.jpg)](https://real-url/)`.
+ * Only collapses when the link body is purely an image (the card pattern).
+ */
+export function collapseImageLinks(md: string): string {
+  return md.replace(
+    /\[\s*\n+\s*(!\[[^\]]*\]\([^)]*\))\s*\n+\s*\]\(([^)]+)\)/g,
+    (_m, img, href) => `[${img}](${href})`,
+  );
 }
 
 /**
