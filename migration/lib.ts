@@ -15,7 +15,8 @@ export const SITE = "https://theothersideofmedicine.com";
 // (migration scripts are always run from the repo root via npm scripts).
 export const ROOT = process.cwd();
 export const CONTENT_DIR = path.join(ROOT, "content");
-export const IMAGES_DIR = path.join(ROOT, "src", "assets", "images");
+// Images live under public/ so the static export serves them at /assets/images/...
+export const IMAGES_DIR = path.join(ROOT, "public", "assets", "images");
 
 // ---- polite fetch (retry on 429/5xx with backoff) ---------------------------
 
@@ -153,11 +154,62 @@ export function htmlToMarkdown(html: string): { markdown: string; images: Set<st
   });
 
   const cleaned = $.html();
-  const markdown = turndown
-    .turndown(cleaned)
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
+  const markdown = escapeMdx(
+    demoteHeadings(
+      turndown
+        .turndown(cleaned)
+        .replace(/\n{3,}/g, "\n\n")
+        .trim(),
+    ),
+  );
   return { markdown, images };
+}
+
+/**
+ * The page route already renders the single <h1> from frontmatter.title. Any
+ * `# ` heading in the body would be a second H1 (bad for SEO), so demote every
+ * ATX heading by one level (# -> ##), capping at h6. Skips fenced code.
+ */
+export function demoteHeadings(md: string): string {
+  return md
+    .split(/(```[\s\S]*?```)/)
+    .map((chunk) =>
+      chunk.startsWith("```")
+        ? chunk
+        : chunk.replace(/^(#{1,5})(\s)/gm, (_m, hashes, sp) => hashes + "#" + sp),
+    )
+    .join("");
+}
+
+// Known component tags we intentionally emit — must survive escaping.
+const KNOWN_TAGS = ["CalendlyEmbed", "GutQuiz", "YouTube", "iframe", "img", "br"];
+
+/**
+ * Escape stray `<`, `{`, `}` that MDX would misread as JSX (e.g. "patients <2
+ * years old", "{not a binding}"). Preserves our whitelisted component tags and
+ * fenced/inline code.
+ */
+export function escapeMdx(md: string): string {
+  const codeBlocks: string[] = [];
+  // Stash fenced + inline code so we don't touch it.
+  let stashed = md.replace(/```[\s\S]*?```|`[^`]*`/g, (m) => {
+    codeBlocks.push(m);
+    return ` CODEZ${codeBlocks.length - 1}ZEND `;
+  });
+
+  // Escape `<` not starting a known/closing tag.
+  const tagAlt = KNOWN_TAGS.join("|");
+  const knownOpen = new RegExp(`^/?(?:${tagAlt})\\b`, "i");
+  stashed = stashed.replace(/</g, (_m, offset, str) => {
+    const rest = (str as string).slice(offset + 1);
+    return knownOpen.test(rest) ? "<" : "&lt;";
+  });
+
+  // Escape curly braces (MDX expression syntax) outside code.
+  stashed = stashed.replace(/[{}]/g, (m) => (m === "{" ? "&#123;" : "&#125;"));
+
+  // Restore code.
+  return stashed.replace(/ CODEZ(\d+)ZEND /g, (_m, i) => codeBlocks[Number(i)]);
 }
 
 // ---- Frontmatter emission ---------------------------------------------------

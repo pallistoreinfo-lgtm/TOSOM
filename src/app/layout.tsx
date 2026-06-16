@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { site } from "@/config/site";
+import { Header } from "@/components/site/header";
+import { Footer } from "@/components/site/footer";
 
 // The live site uses the OS system font stack for body and Helvetica/Arial for
 // headings — no custom webfonts. We reproduce that exactly (zero font downloads,
@@ -33,7 +35,11 @@ export default function RootLayout({
         } as React.CSSProperties
       }
     >
-      <body>{children}</body>
+      <body>
+        <Header />
+        <main className="min-h-screen">{children}</main>
+        <Footer />
+      </body>
     </html>
   );
 }

@@ -10,6 +10,8 @@ const nextConfig = {
     unoptimized: true,
   },
   pageExtensions: ["ts", "tsx", "mdx"],
+  // Repo is self-contained; pin the tracing root to silence the multi-lockfile warning.
+  outputFileTracingRoot: import.meta.dirname,
 };
 
 export default nextConfig;
