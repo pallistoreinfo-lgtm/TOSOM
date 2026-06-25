@@ -1,5 +1,4 @@
 import {
-  Hero,
   StepsHowItWorks,
   CaseStudies,
   ConditionGrid,
@@ -7,7 +6,6 @@ import {
   type CaseStudy,
 } from "@/components/site/sections";
 
-// Patient case studies, copy preserved from the live homepage.
 const CASE_STUDIES: CaseStudy[] = [
   {
     name: "Stephany — Inflammatory Bowel Disease",
@@ -35,7 +33,13 @@ const CASE_STUDIES: CaseStudy[] = [
 export default function HomePage() {
   return (
     <>
-      <Hero />
+      <div className="w-full">
+        <img
+          src="/FixYourGut_O_N_L_I_N_E.png"
+          alt="Providing Science Based Natural Medicine for You, Online — FixYourGut ONLINE"
+          className="w-full h-auto block"
+        />
+      </div>
       <StepsHowItWorks />
       <CaseStudies studies={CASE_STUDIES} />
       <ConditionGrid />
