@@ -17,7 +17,7 @@ const mdxComponents = {
         alt={props.alt ?? ""}
         width={900}
         height={600}
-        className="my-6 h-auto w-full rounded-md"
+        className="my-6 h-auto w-auto max-w-full max-h-64 rounded-md"
       />
     );
   },
