@@ -23,10 +23,11 @@ function Rating() {
 export default function HomePage() {
   return (
     <div className="overflow-hidden bg-white text-[#082a55]">
-      <section className="relative min-h-[455px] overflow-hidden">
-        <Image src="/assets/home/hero-mountain.png" alt="A hiker overlooking a peaceful mountain sunrise" fill priority sizes="100vw" className="object-cover object-[64%_center]" />
-        <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/55 to-transparent lg:via-white/10" />
-        <div className="home-container relative z-10 flex min-h-[455px] items-center py-12">
+      <section className="relative overflow-hidden bg-white sm:min-h-[455px]">
+        <Image src="/assets/home/hero-mountain.png" alt="An active woman over 45 overlooking a peaceful mountain sunrise" width={2048} height={768} priority sizes="100vw" className="h-auto w-full sm:hidden" />
+        <Image src="/assets/home/hero-mountain.png" alt="An active woman over 45 overlooking a peaceful mountain sunrise" fill priority sizes="100vw" className="hidden object-cover object-[64%_center] sm:block" />
+        <div className="absolute inset-0 hidden bg-gradient-to-r from-white/95 via-white/55 to-transparent sm:block lg:via-white/10" />
+        <div className="home-container relative z-10 flex items-center py-8 sm:min-h-[455px] sm:py-12">
           <div className="max-w-[700px]">
             <p className="mb-4 text-[12px] font-bold uppercase tracking-[0.23em] text-[#118860]">{homeContent.hero.eyebrow}</p>
             <h1 className="text-[37px] font-extrabold leading-[1.12] tracking-[-0.035em] text-[#082a55] sm:text-[42px] lg:text-[44px]">
