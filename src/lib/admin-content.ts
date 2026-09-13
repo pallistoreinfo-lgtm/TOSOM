@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
-const CONTENT_PATH = /^(?:content\/home\.json|content\/(pages|blog|podcast|conditions|labtests)\/[a-z0-9][a-z0-9-]*\.mdx)$/;
+const CONTENT_PATH = /^(?:content\/(?:home|site)\.json|content\/(pages|blog|podcast|conditions|labtests)\/[a-z0-9][a-z0-9-]*\.mdx)$/;
 const MEDIA_PATH = /^public\/assets\/uploads\/[a-z0-9][a-z0-9._-]*\.(?:png|jpe?g|webp|gif)$/;
 const COLLECTION_ROOTS = [
   "content/pages/",
@@ -12,6 +12,7 @@ const COLLECTION_ROOTS = [
 ];
 
 export type AdminFile = { path: string; size: number };
+export type AdminMedia = AdminFile & { url: string };
 
 export function validateContentPath(filePath: string) {
   const normalized = filePath.replaceAll("\\", "/");
@@ -68,6 +69,8 @@ export async function listAdminFiles(): Promise<AdminFile[]> {
   const files: AdminFile[] = [];
   const homeStat = await fs.stat(path.join(process.cwd(), "content/home.json"));
   files.push({ path: "content/home.json", size: homeStat.size });
+  const siteStat = await fs.stat(path.join(process.cwd(), "content/site.json"));
+  files.push({ path: "content/site.json", size: siteStat.size });
   for (const root of COLLECTION_ROOTS) {
     const directory = path.join(process.cwd(), root);
     const entries = await fs.readdir(directory, { withFileTypes: true });
@@ -160,5 +163,55 @@ export async function writeAdminMedia(filePath: string, bytes: Buffer) {
   const absolutePath = path.join(process.cwd(), safePath);
   await fs.mkdir(path.dirname(absolutePath), { recursive: true });
   await fs.writeFile(absolutePath, bytes);
+  return { commit: { sha: "local" } };
+}
+
+export async function listAdminMedia(): Promise<AdminMedia[]> {
+  const config = githubConfig();
+  if (config) {
+    const url = `https://api.github.com/repos/${config.owner}/${config.repo}/git/trees/${encodeURIComponent(config.branch)}?recursive=1`;
+    const result = await githubRequest<{ tree: Array<{ path: string; type: string; size?: number }> }>(url);
+    return result.tree
+      .filter((item) => item.type === "blob" && MEDIA_PATH.test(item.path))
+      .map((item) => ({ path: item.path, size: item.size || 0, url: item.path.replace(/^public/, "") }))
+      .sort((a, b) => b.path.localeCompare(a.path));
+  }
+  const directory = path.join(process.cwd(), "public/assets/uploads");
+  try {
+    const entries = await fs.readdir(directory, { withFileTypes: true });
+    const media: AdminMedia[] = [];
+    for (const entry of entries) {
+      if (!entry.isFile()) continue;
+      const filePath = `public/assets/uploads/${entry.name}`;
+      if (!MEDIA_PATH.test(filePath)) continue;
+      const stat = await fs.stat(path.join(process.cwd(), filePath));
+      media.push({ path: filePath, size: stat.size, url: filePath.replace(/^public/, "") });
+    }
+    return media.sort((a, b) => b.path.localeCompare(a.path));
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return [];
+    throw error;
+  }
+}
+
+export async function deleteAdminMedia(filePath: string) {
+  const safePath = filePath.replaceAll("\\", "/");
+  if (!MEDIA_PATH.test(safePath)) throw new Error("Invalid image path.");
+  const config = githubConfig();
+  if (config) {
+    const getUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${safePath}?ref=${encodeURIComponent(config.branch)}`;
+    const file = await githubRequest<{ sha: string }>(getUrl);
+    const url = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${safePath}`;
+    return githubRequest<{ commit: { sha: string } }>(url, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: `media(admin): delete ${safePath.split("/").at(-1)}`,
+        sha: file.sha,
+        branch: config.branch,
+      }),
+    });
+  }
+  await fs.unlink(path.join(process.cwd(), safePath));
   return { commit: { sha: "local" } };
 }

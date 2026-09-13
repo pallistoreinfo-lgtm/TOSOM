@@ -161,3 +161,16 @@ variables under **Project Settings → Environment Variables**:
 Never commit `.env.local` or put these secrets in browser-visible variables. The token
 is used only by server routes. Without `GITHUB_CONTENT_TOKEN`, the editor deliberately
 writes to the local content files, which is useful during local development only.
+
+Admin controls include:
+
+- Easy form editing for titles, excerpts, publish/draft state, images, SEO, and page body.
+- An advanced source editor for MDX and JSON when full control is needed.
+- Create, duplicate, preview, publish, and delete content.
+- A media library for uploading, copying image URLs, and removing uploaded images.
+- Homepage content controls.
+- Site-wide menu, header buttons, footer links, contact information, integrations, and
+  social links through the protected **Site settings** item.
+
+The homepage and site-settings files are protected from deletion. All saves are validated
+server-side before a GitHub commit is created.
