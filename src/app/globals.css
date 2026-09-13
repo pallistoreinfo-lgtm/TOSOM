@@ -40,6 +40,21 @@
   }
 }
 
+@layer components {
+  .home-container {
+    width: min(100% - 2rem, 1330px);
+    margin-inline: auto;
+  }
+
+  .home-green-button {
+    @apply inline-flex min-h-12 items-center justify-center gap-4 rounded-full bg-[#07835e] px-7 text-[13px] font-semibold text-white shadow-[0_8px_20px_rgba(7,131,94,0.22)] transition hover:-translate-y-0.5 hover:bg-[#096f53];
+  }
+
+  .home-outline-button {
+    @apply inline-flex min-h-12 items-center justify-center gap-3 rounded-full border border-[#0a3d6c] bg-white/35 px-7 text-[13px] font-semibold text-[#092f59] backdrop-blur-sm transition hover:bg-white/70;
+  }
+}
+
 @layer base {
   * {
     @apply border-border;

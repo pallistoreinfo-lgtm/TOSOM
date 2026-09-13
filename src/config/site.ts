@@ -49,7 +49,7 @@ export const mainNav: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about/" },
   {
-    label: "Expert In",
+    label: "Expert Info",
     children: [
       { label: "Digestive Illness", href: "/digestive-illness/" },
       { label: "Autoimmune Disease", href: "/autoimmune-disease/" },
@@ -67,6 +67,20 @@ export const mainNav: NavItem[] = [
       { label: "Contact", href: "/contact/" },
     ],
   },
+  {
+    label: "Courses",
+    children: [
+      { label: "All Courses", href: "/courses/" },
+      { label: "90-Day Gut Health Program", href: "/dr-krystosiks-90-days-gut-health-program/" },
+      { label: "Gut Community", href: "/gut-community/" },
+      { label: "7-Day Poop Challenge", href: "/7-day-poop-challenge/" },
+      { label: "Blue Zone Diet", href: "/blue-zone-diet-course/" },
+      { label: "Carbs From Heaven, Carbs From Hell", href: "/carbs-from-heaven-carbs-from-hell/" },
+      { label: "Stool Transit Time", href: "/stool-transit-time-course/" },
+      { label: "Supernatural Morning", href: "/supernatural-morning/" },
+      { label: "The 7 Causes of Illness", href: "/the-7-causes-of-illness/" },
+    ],
+  },
   { label: "Articles", href: "/articles/" },
   {
     label: "Testimonies",
@@ -76,15 +90,6 @@ export const mainNav: NavItem[] = [
     ],
   },
   { label: "Podcast", href: "/podcasts/" },
-  {
-    label: "More",
-    children: [
-      { label: "Courses", href: "/courses/" },
-      { label: "Contact", href: "/contact/" },
-      { label: "FAQ", href: "/faq/" },
-      { label: "Gut Community", href: "/gut-community/" },
-    ],
-  },
 ];
 
 // Right-aligned header buttons.
@@ -96,7 +101,7 @@ export const headerCtas = [
 export const footerNav: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about/" },
-  { label: "Online Consultation", href: "/consultation-with-dr-krystosik/" },
-  { label: "Courses", href: "/courses/" },
   { label: "Contact", href: "/contact/" },
+  { label: "FAQ", href: "/faq/" },
+  { label: "Online Consultation", href: "/consultation-with-dr-krystosik/" },
 ];
