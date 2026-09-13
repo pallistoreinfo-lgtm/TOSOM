@@ -6,7 +6,7 @@ export const dynamic = "force-static";
 // Fixes the live site's audit finding #4: robots.txt had no Sitemap line.
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: { userAgent: "*", allow: "/" },
+    rules: { userAgent: "*", allow: "/", disallow: ["/admin/", "/api/admin/"] },
     sitemap: `${site.url}/sitemap.xml`,
     host: site.url,
   };

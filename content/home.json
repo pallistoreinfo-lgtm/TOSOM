@@ -1,0 +1,51 @@
+{
+  "hero": {
+    "eyebrow": "Natural · Functional · Lasting",
+    "line1": "I’m on a Mission to Help You",
+    "line2": "Live a Healthy, Happy,",
+    "line3": "Long Life!",
+    "description": "Discover practical, science-backed natural health solutions for a stronger gut, more energy, and a healthier you.",
+    "primaryButton": "Take Gut Quiz",
+    "secondaryButton": "Watch Our Video"
+  },
+  "videos": [
+    "Gut Problems Subsided with Care at Natural Rx Clinic",
+    "Stomach Issues Subsided with Care at Natural Rx Clinic",
+    "Joint Pain Subsided with Care at Natural Rx Clinic",
+    "IBS Subsided with Care at Natural Rx Clinic"
+  ],
+  "approach": {
+    "eyebrow": "Our Approach",
+    "title": "A Different Approach to Health",
+    "description": "At The Other Side of Medicine, we don’t merely treat your symptoms—we target and eliminate their root cause. Our approach begins with the gut, the body’s central command center for health and vitality. By healing your gut, we unlock your body’s natural ability to restore balance and repair itself at the cellular level. This transformation doesn’t just alleviate discomfort—it revitalizes every tissue, organ, and system in your body, paving the way for long-term wellness and vitality.",
+    "button": "Learn More",
+    "imageMessage": ["Better Food", "Better Health", "A Brighter You"]
+  },
+  "story": {
+    "eyebrow": "Real People. Real Results.",
+    "title": "Stephany’s Story",
+    "description": "Stephany battled inflammatory bowel disease for 20 years. Her surgeon advised removing her colon, requiring a lifelong colostomy bag.",
+    "result": "Within one month, bleeding stopped, bowel function normal. Three months later, off all medications, surgery cancelled.",
+    "link": "Go to the Testimonies tab at the top of the home page for full testimony"
+  },
+  "gutPlan": [
+    { "icon": "lab", "title": "Graphic Lab", "text": "Delayed food allergy blood test, Stress Test, Comprehensive Stool Analysis Test, Vitamin/Mineral Test" },
+    { "icon": "diet", "title": "Diet", "text": "Personalized diet determined by food allergy blood test. Whole food, anti-inflammatory MediterAsian diet." },
+    { "icon": "supplements", "title": "Supplements", "text": "Herbs and whole food supplements to eliminate harmful gut bacteria and decrease inflammation" },
+    { "icon": "stress", "title": "Stress Management", "text": "Deep breathing and laughter exercises, walking, mindfulness guidelines" }
+  ],
+  "testimonials": [
+    {
+      "quote": "I came to Dr. Krystosik with IBS like symptoms that were ruining my life. I’m only 29. Regular MDs gave me meds that might have made it worse! Nausea bloating and fatigue were main symptoms every day. I happened to stumble upon Dr. Krystosik’s office while searching online for alternative approach, and I thank God that I found this place! Dr. K has a masterful approach to diagnosis and nutrition, it’s all about the gut and what we are eating! Do the tests he recommends, they will pinpoint your issues with high accuracy. It’s a miracle that most of my symptoms are already gone!",
+      "name": "Joseph Posquella",
+      "role": "Business Owner",
+      "image": "/assets/images/2025/08/team_10.jpg"
+    },
+    {
+      "quote": "I have been going to Dr. Krystosik for 6 months now and feel so good. Before seeing him I had so many health problems. I was having 10 to 15 bowel movements a day with diarrhea—now only 1 or 2 and NO diarrhea!!!",
+      "name": "Sarah M.",
+      "role": "Community Member",
+      "image": "/assets/images/2025/08/team_2.jpg"
+    }
+  ]
+}

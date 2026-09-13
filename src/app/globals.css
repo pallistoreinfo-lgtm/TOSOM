@@ -40,6 +40,12 @@
   }
 }
 
+/* Admin routes use the same root layout but intentionally hide the public chrome. */
+body:has(.admin-shell) > header,
+body:has(.admin-shell) > footer {
+  display: none;
+}
+
 @layer components {
   .home-container {
     width: min(100% - 2rem, 1330px);

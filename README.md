@@ -139,3 +139,25 @@ npm run extract:media    # downloads images from the manifest into public/assets
 - Static HTML + minimal JS replaces render-blocking Elementor CSS/JS.
 
 After deploy, verify the property in Google Search Console to start collecting search data.
+
+---
+
+## Secure content admin
+
+The self-contained editor is available at `/admin`. It uses a single server-checked
+password and an eight-hour signed, HttpOnly session. There is no database or external
+CMS: saving creates a commit through the GitHub Contents API, which triggers Vercel to
+redeploy the site.
+
+Copy `.env.example` to `.env.local` for local development. In Vercel, add the same
+variables under **Project Settings → Environment Variables**:
+
+- `ADMIN_PASSWORD`: a unique password of at least 12 characters.
+- `ADMIN_SESSION_SECRET`: at least 32 random characters; never reuse the password.
+- `GITHUB_CONTENT_TOKEN`: a fine-grained GitHub token restricted to this repository
+  with **Contents: Read and write** permission.
+- `GITHUB_OWNER`, `GITHUB_REPO`, and `GITHUB_BRANCH`: repository destination values.
+
+Never commit `.env.local` or put these secrets in browser-visible variables. The token
+is used only by server routes. Without `GITHUB_CONTENT_TOKEN`, the editor deliberately
+writes to the local content files, which is useful during local development only.

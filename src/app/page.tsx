@@ -4,20 +4,9 @@ import {
   Apple, ArrowRight, Check, ChevronLeft, ChevronRight, FlaskConical,
   Leaf, PersonStanding, Pill, Play, Quote, Star,
 } from "lucide-react";
+import homeContent from "../../content/home.json";
 
-const videos = [
-  "Gut Problems Subsided with Care at Natural Rx Clinic",
-  "Stomach Issues Subsided with Care at Natural Rx Clinic",
-  "Joint Pain Subsided with Care at Natural Rx Clinic",
-  "IBS Subsided with Care at Natural Rx Clinic",
-];
-
-const gutPlan = [
-  { icon: FlaskConical, title: "Graphic Lab", text: "Delayed food allergy blood test, Stress Test, Comprehensive Stool Analysis Test, Vitamin/Mineral Test" },
-  { icon: Apple, title: "Diet", text: "Personalized diet determined by food allergy blood test. Whole food, anti-inflammatory MediterAsian diet." },
-  { icon: Pill, title: "Supplements", text: "Herbs and whole food supplements to eliminate harmful gut bacteria and decrease inflammation" },
-  { icon: PersonStanding, title: "Stress Management", text: "Deep breathing and laughter exercises, walking, mindfulness guidelines" },
-];
+const planIcons = { lab: FlaskConical, diet: Apple, supplements: Pill, stress: PersonStanding };
 
 function GreenButton({ href, children }: { href: string; children: React.ReactNode }) {
   return <Link href={href} className="home-green-button">{children}<ArrowRight className="h-4 w-4" /></Link>;
@@ -39,14 +28,14 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/55 to-transparent lg:via-white/10" />
         <div className="home-container relative z-10 flex min-h-[455px] items-center py-12">
           <div className="max-w-[700px]">
-            <p className="mb-4 text-[12px] font-bold uppercase tracking-[0.23em] text-[#118860]">Natural · Functional · Lasting</p>
+            <p className="mb-4 text-[12px] font-bold uppercase tracking-[0.23em] text-[#118860]">{homeContent.hero.eyebrow}</p>
             <h1 className="text-[37px] font-extrabold leading-[1.12] tracking-[-0.035em] text-[#082a55] sm:text-[42px] lg:text-[44px]">
-              I’m on a Mission to Help You<br className="hidden sm:block" /> Live a <span className="text-[#129562]">Healthy, Happy,</span><br className="hidden sm:block" /> <span className="text-[#129562]">Long Life!</span>
+              {homeContent.hero.line1}<br className="hidden sm:block" /> <span className="text-[#129562]">{homeContent.hero.line2}</span><br className="hidden sm:block" /> <span className="text-[#129562]">{homeContent.hero.line3}</span>
             </h1>
-            <p className="mt-5 max-w-[560px] text-[16px] leading-7 text-[#123b67]">Discover practical, science-backed natural health solutions<br className="hidden sm:block" /> for a stronger gut, more energy, and a healthier you.</p>
+            <p className="mt-5 max-w-[560px] text-[16px] leading-7 text-[#123b67]">{homeContent.hero.description}</p>
             <div className="mt-6 flex flex-wrap gap-4">
-              <GreenButton href="/faq/">Take Gut Quiz</GreenButton>
-              <Link href="/videos/" className="home-outline-button"><span className="flex h-5 w-5 items-center justify-center rounded-full border border-current"><Play className="ml-0.5 h-2.5 w-2.5 fill-current" /></span>Watch Our Video</Link>
+              <GreenButton href="/faq/">{homeContent.hero.primaryButton}</GreenButton>
+              <Link href="/videos/" className="home-outline-button"><span className="flex h-5 w-5 items-center justify-center rounded-full border border-current"><Play className="ml-0.5 h-2.5 w-2.5 fill-current" /></span>{homeContent.hero.secondaryButton}</Link>
             </div>
           </div>
         </div>
@@ -54,7 +43,7 @@ export default function HomePage() {
 
       <section className="relative z-10 bg-white py-9">
         <div className="home-container grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {videos.map((title, index) => (
+          {homeContent.videos.map((title, index) => (
             <Link href="/videos/" key={title} className="group overflow-hidden rounded-[13px] bg-white shadow-[0_12px_28px_rgba(16,83,111,0.10)]">
               <div className="relative aspect-[2/1] bg-cover bg-[center_35%] transition-transform duration-300 group-hover:scale-[1.02]" style={{ backgroundImage: "url('/assets/home/video-testimonials.png')", backgroundSize: "400% auto", backgroundPositionX: `${index * 33.333}%` }}>
                 <span className="absolute left-1/2 top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-white bg-[#173e5e]/55 text-white shadow-md backdrop-blur-[1px]"><Play className="ml-1 h-5 w-5 fill-current" /></span>
@@ -68,16 +57,16 @@ export default function HomePage() {
       <section className="bg-gradient-to-b from-white to-[#f7fcfd] py-10 lg:py-14">
         <div className="home-container grid items-center gap-10 lg:grid-cols-[0.9fr_1.25fr]">
           <div>
-            <Eyebrow>Our Approach</Eyebrow>
-            <h2 className="mt-3 text-[35px] font-bold leading-[1.08] tracking-[-0.025em]">A Different Approach<br /> to Health</h2>
-            <p className="mt-5 max-w-[535px] text-[15px] leading-[1.53] text-[#365d81]">At The Other Side of Medicine, we don’t merely treat your symptoms—we target and eliminate their root cause. Our approach begins with the gut, the body’s central command center for health and vitality. By healing your gut, we unlock your body’s natural ability to restore balance and repair itself at the cellular level. This transformation doesn’t just alleviate discomfort—it revitalizes every tissue, organ, and system in your body, paving the way for long-term wellness and vitality.</p>
-            <div className="mt-5"><GreenButton href="/about/">Learn More</GreenButton></div>
+            <Eyebrow>{homeContent.approach.eyebrow}</Eyebrow>
+            <h2 className="mt-3 max-w-[450px] text-[35px] font-bold leading-[1.08] tracking-[-0.025em]">{homeContent.approach.title}</h2>
+            <p className="mt-5 max-w-[535px] text-[15px] leading-[1.53] text-[#365d81]">{homeContent.approach.description}</p>
+            <div className="mt-5"><GreenButton href="/about/">{homeContent.approach.button}</GreenButton></div>
           </div>
           <div className="relative">
             <Leaf className="absolute -left-6 -top-3 z-10 h-16 w-16 -rotate-45 fill-[#bfe8c8] text-[#9ddcae] opacity-80" />
             <div className="relative aspect-[1.72/1] overflow-hidden rounded-[105px_22px_105px_22px] shadow-[0_18px_45px_rgba(30,111,82,0.08)]">
               <Image src="/assets/home/healthy-food.png" alt="Fresh Mediterranean salad and water" fill sizes="(max-width:1024px) 100vw, 55vw" className="object-cover" />
-              <div className="absolute right-3 top-5 max-w-[220px] rotate-[-7deg] rounded-3xl bg-white/70 px-5 py-4 text-center font-[cursive] text-[24px] font-bold leading-[1.2] text-[#0b3768] backdrop-blur-[2px] sm:right-7 sm:top-9 sm:text-[29px]">Better Food<br /> Better Health<br /> A Brighter You<span className="mx-auto mt-2 block h-[3px] w-20 rotate-[-4deg] bg-[#0f6595]" /></div>
+              <div className="absolute right-3 top-5 max-w-[220px] rotate-[-7deg] rounded-3xl bg-white/70 px-5 py-4 text-center font-[cursive] text-[24px] font-bold leading-[1.2] text-[#0b3768] backdrop-blur-[2px] sm:right-7 sm:top-9 sm:text-[29px]">{homeContent.approach.imageMessage.map((line) => <span key={line} className="block">{line}</span>)}<span className="mx-auto mt-2 block h-[3px] w-20 rotate-[-4deg] bg-[#0f6595]" /></div>
             </div>
             <Leaf className="absolute -bottom-7 right-0 h-20 w-20 rotate-[18deg] fill-[#a9e2ac] text-[#75c987] opacity-75" />
           </div>
@@ -88,19 +77,19 @@ export default function HomePage() {
         <div className="home-container grid items-center gap-9 lg:grid-cols-[235px_1fr_490px]">
           <div className="relative mx-auto aspect-square w-full max-w-[260px]"><Image src="/assets/home/stephany-story.png" alt="Stephany smiling after improving her health" fill sizes="260px" className="object-contain" /></div>
           <div>
-            <Eyebrow>Real People. Real Results.</Eyebrow>
-            <h2 className="mt-3 text-[29px] font-bold tracking-[-0.02em]">Stephany’s Story</h2>
-            <p className="mt-2 text-[14px] leading-6 text-[#365d81]">Stephany battled inflammatory bowel disease for 20 years. Her surgeon advised removing her colon, requiring a lifelong colostomy bag.</p>
+            <Eyebrow>{homeContent.story.eyebrow}</Eyebrow>
+            <h2 className="mt-3 text-[29px] font-bold tracking-[-0.02em]">{homeContent.story.title}</h2>
+            <p className="mt-2 text-[14px] leading-6 text-[#365d81]">{homeContent.story.description}</p>
             <div className="mt-5 flex gap-4 rounded-xl bg-[#e2f5ed] p-5">
               <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#129669] text-white"><Check className="h-4 w-4 stroke-[3]" /></span>
-              <p className="text-[13px] leading-5 text-[#264f70]"><strong className="block text-[#0c395e]">Results:</strong>Within one month, bleeding stopped, bowel function normal. Three months later, off all medications, surgery cancelled.</p>
+              <p className="text-[13px] leading-5 text-[#264f70]"><strong className="block text-[#0c395e]">Results:</strong>{homeContent.story.result}</p>
             </div>
-            <Link href="/videos/" className="mt-5 inline-flex items-center gap-3 text-[14px] font-semibold leading-5 text-[#166281]">Go to the Testimonies tab at the top of the home page for full testimony <ArrowRight className="h-4 w-4" /></Link>
+            <Link href="/videos/" className="mt-5 inline-flex items-center gap-3 text-[14px] font-semibold leading-5 text-[#166281]">{homeContent.story.link} <ArrowRight className="h-4 w-4" /></Link>
           </div>
           <div className="rounded-2xl bg-white px-7 py-5 shadow-[0_16px_40px_rgba(24,104,132,0.08)]">
             <h3 className="mb-2 flex items-center gap-4 text-[20px] font-bold text-[#0c467a]"><span className="flex h-14 w-14 items-center justify-center rounded-full bg-[#d7f6f9] text-[#0d8c9e]"><FlaskConical className="h-7 w-7" /></span>Gut 911 Rx</h3>
             <div className="ml-[70px]">
-              {gutPlan.map((item) => <div key={item.title} className="flex gap-4 border-b border-[#d8e9ed] py-2.5 last:border-0"><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#dff4ef] text-[#108e77]"><item.icon className="h-4 w-4" /></span><div><p className="text-[14px] font-bold text-[#154b78]">{item.title}</p><p className="mt-0.5 text-[12px] leading-[1.45] text-[#52748e]">{item.text}</p></div></div>)}
+              {homeContent.gutPlan.map((item) => { const Icon = planIcons[item.icon as keyof typeof planIcons]; return <div key={item.title} className="flex gap-4 border-b border-[#d8e9ed] py-2.5 last:border-0"><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#dff4ef] text-[#108e77]"><Icon className="h-4 w-4" /></span><div><p className="text-[14px] font-bold text-[#154b78]">{item.title}</p><p className="mt-0.5 text-[12px] leading-[1.45] text-[#52748e]">{item.text}</p></div></div>; })}
             </div>
           </div>
         </div>
@@ -110,16 +99,13 @@ export default function HomePage() {
         <div className="home-container">
           <div className="[&>p]:text-[14px]"><Eyebrow>What People Say</Eyebrow></div>
           <div className="mt-4 grid gap-7 lg:grid-cols-[1.08fr_1fr]">
-            <article className="relative rounded-2xl bg-white px-8 py-6 pl-16 shadow-[0_14px_34px_rgba(26,97,129,0.07)]">
-              <Quote className="absolute left-5 top-5 h-7 w-7 fill-[#20a878] text-[#20a878]" />
-              <p className="text-[14px] leading-[1.55] text-[#365d81]">I came to Dr. Krystosik with IBS like symptoms that were ruining my life. I’m only 29. Regular MDs gave me meds that might have made it worse! Nausea bloating and fatigue were main symptoms every day. I happened to stumble upon Dr. Krystosik’s office while searching online for alternative approach, and I thank God that I found this place! Dr. K has a masterful approach to diagnosis and nutrition, it’s all about the gut and what we are eating! Do the tests he recommends, they will pinpoint your issues with high accuracy. It’s a miracle that most of my symptoms are already gone!</p>
-              <div className="mt-4 flex items-center gap-3"><Image src="/assets/images/2025/08/team_10.jpg" alt="Joseph Posquella" width={46} height={46} className="h-11 w-11 rounded-full object-cover" /><div><p className="text-[13px] font-bold">Joseph Posquella</p><p className="text-[12px] text-[#6a8aa1]">Business Owner</p></div><Rating /></div>
-            </article>
-            <article className="relative rounded-2xl bg-white px-8 py-7 pl-16 shadow-[0_14px_34px_rgba(26,97,129,0.07)]">
-              <Quote className="absolute left-5 top-7 h-7 w-7 fill-[#20a878] text-[#20a878]" />
-              <p className="text-[14px] leading-[1.6] text-[#365d81]">I have been going to Dr. Krystosik for 6 months now and feel so good. Before seeing him I had so many health problems. I was having 10 to 15 bowel movements a day with diarrhea—now only 1 or 2 and NO diarrhea!!!</p>
-              <div className="mt-5 flex items-center gap-3"><Image src="/assets/images/2025/08/team_2.jpg" alt="Sarah M." width={46} height={46} className="h-11 w-11 rounded-full object-cover" /><div><p className="text-[13px] font-bold">Sarah M.</p><p className="text-[12px] text-[#6a8aa1]">Community Member</p><Rating /></div></div>
-            </article>
+            {homeContent.testimonials.map((testimonial) => (
+              <article key={testimonial.name} className="relative rounded-2xl bg-white px-8 py-6 pl-16 shadow-[0_14px_34px_rgba(26,97,129,0.07)]">
+                <Quote className="absolute left-5 top-5 h-7 w-7 fill-[#20a878] text-[#20a878]" />
+                <p className="text-[14px] leading-[1.55] text-[#365d81]">{testimonial.quote}</p>
+                <div className="mt-4 flex items-center gap-3"><Image src={testimonial.image} alt={testimonial.name} width={46} height={46} className="h-11 w-11 rounded-full object-cover" /><div><p className="text-[13px] font-bold">{testimonial.name}</p><p className="text-[12px] text-[#6a8aa1]">{testimonial.role}</p></div><Rating /></div>
+              </article>
+            ))}
           </div>
           <div className="mt-6 flex items-center justify-end gap-4"><div className="mr-auto flex gap-2 lg:ml-[73%]"><span className="h-1.5 w-1.5 rounded-full bg-[#0da09c]" /><span className="h-1.5 w-1.5 rounded-full bg-[#65bcdc]" /><span className="h-1.5 w-1.5 rounded-full bg-[#d7e9ee]" /></div><button className="flex h-12 w-12 items-center justify-center rounded-full bg-[#e2f0f5] text-[#19517d]" aria-label="Previous testimonial"><ChevronLeft /></button><button className="flex h-12 w-12 items-center justify-center rounded-full bg-[#e2f0f5] text-[#19517d]" aria-label="Next testimonial"><ChevronRight /></button></div>
         </div>
