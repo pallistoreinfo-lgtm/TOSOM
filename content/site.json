@@ -7,7 +7,7 @@
     "doctor": { "name": "Dr. James Krystosik", "credentials": "Functional Medicine Physician, Chiropractor, Author, Podcast Host", "practicingSince": 1986, "tagline": "DON'T GUESS. TEST." },
     "contact": { "phone": "+1 (440) 519-1766", "phoneHref": "tel:+14405191766", "email": "drj@theothersideofmedicine.com", "emailHref": "mailto:drj@theothersideofmedicine.com" },
     "integrations": { "calendlyUrl": "https://calendly.com/ibscure/60min", "jotformGutQuizId": "250364347478464", "shopUrl": "https://shop.theothersideofmedicine.com/", "podcastRssUrl": "https://theothersideofmedicine.com/feed/podcast/", "newsletterProvider": null },
-    "social": { "facebook": "https://www.facebook.com/theothersideofmedicine", "youtube": "https://www.youtube.com/", "instagram": "https://www.instagram.com/", "x": "https://x.com/", "linkedin": "https://www.linkedin.com/" }
+    "social": { "facebook": "https://www.facebook.com/Dr.Krystosik/", "youtube": "https://www.youtube.com/@Dr.krystosik", "instagram": "https://www.instagram.com/drgoodcarbs/", "x": "https://x.com/Dr_Krystosik", "linkedin": "https://www.linkedin.com/" }
   },
   "mainNav": [
     { "label": "Home", "href": "/" },
@@ -41,7 +41,7 @@
     { "label": "Podcast", "href": "/podcasts/" }
   ],
   "headerActions": {
-    "quiz": { "label": "Take Gut Quiz", "href": "/faq/" },
+    "quiz": { "label": "Take Gut Quiz", "href": "https://form.jotform.com/250364347478464" },
     "consultation": { "label": "Online Consultation", "href": "/consultation-with-dr-krystosik/" },
     "shop": { "label": "Visit Our Shop", "href": "https://shop.theothersideofmedicine.com/" }
   },

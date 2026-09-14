@@ -48,6 +48,7 @@ function validateDocument(filePath: string, raw: string) {
     requiredStrings(record(home.approach, "approach"), ["eyebrow", "title", "description", "button"], "approach");
     requiredStrings(record(home.story, "story"), ["eyebrow", "title", "description", "result", "link"], "story");
     for (const key of ["videos", "gutPlan", "testimonials"]) if (!Array.isArray(home[key])) throw new Error(`Homepage.${key} must be a list.`);
+    (home.videos as unknown[]).forEach((item, index) => requiredStrings(record(item, `Homepage.videos[${index}]`), ["title", "youtubeId"], `Homepage.videos[${index}]`));
     return;
   }
   if (filePath === "content/site.json") {

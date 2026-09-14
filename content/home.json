@@ -9,10 +9,10 @@
     "secondaryButton": "Watch Our Video"
   },
   "videos": [
-    "Gut Problems Subsided with Care at Natural Rx Clinic",
-    "Stomach Issues Subsided with Care at Natural Rx Clinic",
-    "Joint Pain Subsided with Care at Natural Rx Clinic",
-    "IBS Subsided with Care at Natural Rx Clinic"
+    { "title": "Gut Problems Subsided with Care at Natural Rx Clinic", "youtubeId": "p7PfVCxmZIQ" },
+    { "title": "Stomach Issues Subsided with Care at Natural Rx Clinic", "youtubeId": "9fa0Az4Gdo4" },
+    { "title": "Joint Pain Subsided with Care at Natural Rx Clinic", "youtubeId": "F3_veD68rug" },
+    { "title": "IBS Subsided with Care at Natural Rx Clinic", "youtubeId": "94N2nGa2WCY" }
   ],
   "approach": {
     "eyebrow": "Our Approach",

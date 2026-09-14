@@ -10,7 +10,11 @@ import TurndownService from "turndown";
 import { gfm } from "turndown-plugin-gfm";
 import matter from "gray-matter";
 
-export const SITE = "https://theothersideofmedicine.com";
+export const PUBLIC_SITE = "https://theothersideofmedicine.com";
+// Point one-off content syncs at the current WordPress source without baking a
+// temporary/staging hostname into the committed site content.
+export const SITE = (process.env.TOSM_MIGRATION_SOURCE || PUBLIC_SITE).replace(/\/$/, "");
+const SOURCE_HOST = new URL(SITE).hostname.replace(/^www\./, "");
 // tsx runs these as CJS where import.meta.dirname is undefined; derive from cwd
 // (migration scripts are always run from the repo root via npm scripts).
 export const ROOT = process.cwd();
@@ -66,7 +70,11 @@ export async function fetchSeoHead(
     return {
       metaTitle: $("title").first().text().trim() || undefined,
       metaDescription: $('meta[name="description"]').attr("content")?.trim() || undefined,
-      canonical: $('link[rel="canonical"]').attr("href")?.trim() || undefined,
+      canonical:
+        $('link[rel="canonical"]')
+          .attr("href")
+          ?.trim()
+          .replace(SITE, PUBLIC_SITE) || undefined,
     };
   } catch {
     return {};
@@ -149,6 +157,15 @@ export function htmlToMarkdown(html: string): { markdown: string; images: Set<st
     const href = ($(el).attr("href") || "").trim();
     if (href === "" || href === "#" || /^javascript:/i.test(href)) {
       $(el).replaceWith($(el).contents());
+    } else if (/^https?:\/\//i.test(href)) {
+      try {
+        const target = new URL(href);
+        if (target.hostname.replace(/^www\./, "") === SOURCE_HOST) {
+          $(el).attr("href", `${PUBLIC_SITE}${target.pathname}${target.search}${target.hash}`);
+        }
+      } catch {
+        // Leave malformed source links visible so an editor can correct them.
+      }
     }
   });
 

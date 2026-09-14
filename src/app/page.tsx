@@ -5,6 +5,8 @@ import {
   Leaf, PersonStanding, Pill, Play, Quote, Star,
 } from "lucide-react";
 import homeContent from "../../content/home.json";
+import { TestimonialVideos } from "@/components/site/testimonial-videos";
+import { headerActions } from "@/config/site";
 
 const planIcons = { lab: FlaskConical, diet: Apple, supplements: Pill, stress: PersonStanding };
 
@@ -35,7 +37,7 @@ export default function HomePage() {
             </h1>
             <p className="mt-5 max-w-[560px] text-[16px] leading-7 text-[#123b67]">{homeContent.hero.description}</p>
             <div className="mt-6 flex flex-wrap gap-4">
-              <GreenButton href="/faq/">{homeContent.hero.primaryButton}</GreenButton>
+              <GreenButton href={headerActions.quiz.href}>{homeContent.hero.primaryButton}</GreenButton>
               <Link href="/videos/" className="home-outline-button"><span className="flex h-5 w-5 items-center justify-center rounded-full border border-current"><Play className="ml-0.5 h-2.5 w-2.5 fill-current" /></span>{homeContent.hero.secondaryButton}</Link>
             </div>
           </div>
@@ -43,16 +45,7 @@ export default function HomePage() {
       </section>
 
       <section className="relative z-10 bg-white py-9">
-        <div className="home-container grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {homeContent.videos.map((title, index) => (
-            <Link href="/videos/" key={title} className="group overflow-hidden rounded-[13px] bg-white shadow-[0_12px_28px_rgba(16,83,111,0.10)]">
-              <div className="relative aspect-[2/1] bg-cover bg-[center_35%] transition-transform duration-300 group-hover:scale-[1.02]" style={{ backgroundImage: "url('/assets/home/video-testimonials.png')", backgroundSize: "400% auto", backgroundPositionX: `${index * 33.333}%` }}>
-                <span className="absolute left-1/2 top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-white bg-[#173e5e]/55 text-white shadow-md backdrop-blur-[1px]"><Play className="ml-1 h-5 w-5 fill-current" /></span>
-              </div>
-              <p className="min-h-[70px] px-3 pb-4 pt-3 text-[14px] font-semibold leading-5 text-[#0b3d74]">{title}</p>
-            </Link>
-          ))}
-        </div>
+        <div className="home-container"><TestimonialVideos videos={homeContent.videos} /></div>
       </section>
 
       <section className="bg-gradient-to-b from-white to-[#f7fcfd] py-10 lg:py-14">
