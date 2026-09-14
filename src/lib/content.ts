@@ -50,9 +50,10 @@ export function getBlogPosts(): ContentEntry<BlogFrontmatter>[] {
 }
 
 export function getPodcastEpisodes(): ContentEntry<PodcastFrontmatter>[] {
-  return readCollection<PodcastFrontmatter>("podcast").sort((a, b) =>
-    a.frontmatter.date < b.frontmatter.date ? 1 : -1,
-  );
+  return readCollection<PodcastFrontmatter>("podcast").sort((a, b) => {
+    const newestFirst = Date.parse(b.frontmatter.date) - Date.parse(a.frontmatter.date);
+    return newestFirst || a.frontmatter.title.localeCompare(b.frontmatter.title);
+  });
 }
 
 /** Pages, conditions, and lab tests are routed together by flat slug. */
