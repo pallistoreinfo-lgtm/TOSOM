@@ -1,6 +1,11 @@
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 export function Logo({ className, onDark = false }: { className?: string; onDark?: boolean }) {
+  if (!onDark) {
+    return <Image src="/logo.png" alt="The Other Side of Medicine" width={1500} height={500} priority className={cn("h-auto w-[190px] object-contain", className)} />;
+  }
+
   return (
     <span className={cn("inline-flex items-center gap-3", className)}>
       <svg viewBox="0 0 58 58" aria-hidden="true" className="h-full w-auto shrink-0">

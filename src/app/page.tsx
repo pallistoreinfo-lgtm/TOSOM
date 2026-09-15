@@ -44,7 +44,6 @@ export default function HomePage() {
 
         <div className="home-container absolute inset-0 z-10 hidden items-center xl:flex">
           <div className="w-[390px]">
-            <Image src="/logo.png" alt="The Other Side of Medicine" width={1500} height={500} className="mb-3 h-auto w-[200px]" />
             <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[#118860]">{homeContent.hero.eyebrow}</p>
             <h1 className="text-[30px] font-extrabold leading-[1.05] tracking-[-0.035em] text-[#082a55]">
               {homeContent.hero.line1}<br /> <span className="text-[#129562]">{homeContent.hero.line2}</span><br /> <span className="text-[#129562]">{homeContent.hero.line3}</span>
