@@ -5,6 +5,7 @@ import { buildMetadata } from "@/lib/seo";
 import { Prose } from "@/components/site/mdx";
 import { ConsultationCTA } from "@/components/site/sections";
 import { DoctorBio } from "@/components/site/doctor-bio";
+import { ConsultationPage } from "@/components/site/consultation-page";
 import { JsonLd, breadcrumbSchema, personSchema, articleSchema } from "@/components/site/json-ld";
 import { site } from "@/config/site";
 
@@ -80,6 +81,21 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           <Prose source={entry.body} className="mt-8" />
           <DoctorBio />
         </article>
+      </>
+    );
+  }
+
+  if (entry.slug === "consultation-with-dr-krystosik") {
+    return (
+      <>
+        <JsonLd data={personSchema} />
+        <JsonLd
+          data={breadcrumbSchema([
+            { name: "Home", url: `${site.url}/` },
+            { name: fm.title, url },
+          ])}
+        />
+        <ConsultationPage />
       </>
     );
   }
