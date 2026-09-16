@@ -26,32 +26,18 @@ export default function HomePage() {
   return (
     <div className="overflow-hidden bg-white text-[#082a55]">
       <section className="relative overflow-hidden bg-[#f8f4ed]">
-        <Image src="/assets/home/site-cover.jpg" alt="Dr. James Krystosik at age 77 presenting a gut restoration roadmap" width={1500} height={500} priority sizes="100vw" className="h-auto w-full" />
+        <Image src="/assets/home/gut-restoration-roadmap.webp" alt="Dr. James Krystosik at age 77 presenting his gut restoration roadmap" width={2600} height={1387} priority sizes="100vw" className="h-auto w-full" />
 
-        <div className="home-container py-8 xl:hidden">
-          <div>
+        <div className="home-container py-9 text-center sm:py-11 lg:py-14">
+          <div className="mx-auto max-w-[900px]">
             <p className="mb-4 text-[12px] font-bold uppercase tracking-[0.23em] text-[#118860]">{homeContent.hero.eyebrow}</p>
-            <h1 className="text-[37px] font-extrabold leading-[1.12] tracking-[-0.035em] text-[#082a55]">
-              {homeContent.hero.line1}<br className="hidden sm:block" /> <span className="text-[#129562]">{homeContent.hero.line2}</span><br className="hidden sm:block" /> <span className="text-[#129562]">{homeContent.hero.line3}</span>
+            <h1 className="text-[37px] font-extrabold leading-[1.1] tracking-[-0.035em] text-[#082a55] sm:text-[44px] lg:text-[50px]">
+              {homeContent.hero.line1} <span className="text-[#129562]">{homeContent.hero.line2} {homeContent.hero.line3}</span>
             </h1>
-            <p className="mt-5 max-w-[560px] text-[16px] leading-7 text-[#123b67]">{homeContent.hero.description}</p>
-            <div className="mt-6 flex flex-wrap gap-4">
+            <p className="mx-auto mt-5 max-w-[650px] text-[16px] leading-7 text-[#123b67]">{homeContent.hero.description}</p>
+            <div className="mt-6 flex flex-wrap justify-center gap-4">
               <GreenButton href={headerActions.quiz.href}>{homeContent.hero.primaryButton}</GreenButton>
               <Link href="/videos/" className="home-outline-button"><span className="flex h-5 w-5 items-center justify-center rounded-full border border-current"><Play className="ml-0.5 h-2.5 w-2.5 fill-current" /></span>{homeContent.hero.secondaryButton}</Link>
-            </div>
-          </div>
-        </div>
-
-        <div className="home-container absolute inset-0 z-10 hidden items-center xl:flex">
-          <div className="w-[390px]">
-            <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[#118860]">{homeContent.hero.eyebrow}</p>
-            <h1 className="text-[30px] font-extrabold leading-[1.05] tracking-[-0.035em] text-[#082a55]">
-              {homeContent.hero.line1}<br /> <span className="text-[#129562]">{homeContent.hero.line2}</span><br /> <span className="text-[#129562]">{homeContent.hero.line3}</span>
-            </h1>
-            <p className="mt-3 max-w-[365px] text-[13px] leading-5 text-[#123b67]">{homeContent.hero.description}</p>
-            <div className="mt-4 flex gap-3">
-              <GreenButton href={headerActions.quiz.href}>{homeContent.hero.primaryButton}</GreenButton>
-              <Link href="/videos/" className="home-outline-button bg-white/90"><span className="flex h-5 w-5 items-center justify-center rounded-full border border-current"><Play className="ml-0.5 h-2.5 w-2.5 fill-current" /></span>{homeContent.hero.secondaryButton}</Link>
             </div>
           </div>
         </div>
