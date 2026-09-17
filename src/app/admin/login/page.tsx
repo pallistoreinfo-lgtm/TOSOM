@@ -8,5 +8,5 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminLoginPage() {
   if (await isAdmin()) redirect("/admin");
-  return <div className="flex min-h-[72vh] items-center justify-center bg-slate-50 px-4 py-14"><LoginForm /></div>;
+  return <div className="admin-shell flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top_left,_#d9f4e9,_transparent_38%),linear-gradient(135deg,_#edf5f8,_#f8fbfc)] px-4 py-10"><LoginForm /></div>;
 }
