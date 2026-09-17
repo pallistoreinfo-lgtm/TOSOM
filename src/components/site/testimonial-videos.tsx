@@ -6,16 +6,23 @@ import { ExternalLink, Play, X } from "lucide-react";
 export type TestimonialVideo = {
   title: string;
   youtubeId: string;
+  thumbnail: string;
 };
 
 export function TestimonialVideos({ videos }: { videos: TestimonialVideo[] }) {
   return (
     <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-      {videos.map((video, index) => (
+      {videos.map((video) => (
         <Dialog.Root key={video.youtubeId}>
           <Dialog.Trigger asChild>
             <button className="group overflow-hidden rounded-[13px] bg-white text-left shadow-[0_12px_28px_rgba(16,83,111,0.10)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#07835e]" aria-label={`Play ${video.title}`}>
-              <span className="relative block aspect-[2/1] bg-cover bg-[center_35%] transition-transform duration-300 group-hover:scale-[1.02]" style={{ backgroundImage: "url('/assets/home/video-testimonials.png')", backgroundSize: "400% auto", backgroundPositionX: `${index * 33.333}%` }}>
+              <span className="relative block aspect-video overflow-hidden">
+                <img
+                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                  src={video.thumbnail}
+                  alt=""
+                  loading="lazy"
+                />
                 <span className="absolute left-1/2 top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-white bg-[#173e5e]/55 text-white shadow-md backdrop-blur-[1px] transition group-hover:bg-[#07835e]">
                   <Play className="ml-1 h-5 w-5 fill-current" />
                 </span>
