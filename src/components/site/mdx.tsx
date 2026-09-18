@@ -17,7 +17,8 @@ const mdxComponents = {
         alt={props.alt ?? ""}
         width={900}
         height={600}
-       className="my-4 h-auto w-auto max-h-20 rounded-md"
+        sizes="(max-width: 768px) 100vw, 900px"
+        className="my-6 h-auto w-full max-w-[900px] rounded-2xl object-cover shadow-sm"
       />
     );
   },

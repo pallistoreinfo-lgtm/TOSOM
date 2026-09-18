@@ -1,12 +1,13 @@
 {
   "hero": {
     "eyebrow": "Natural · Functional · Lasting",
-    "line1": "I’m on a Mission to Help You",
-    "line2": "Live a Healthy, Happy,",
-    "line3": "Long Life!",
+    "line1": "Wealth Without Health",
+    "line2": "Is Worthless!",
+    "line3": "",
     "description": "Discover practical, science-backed natural health solutions for a stronger gut, more energy, and a healthier you.",
+    "findOutWhy": "Find Out Why",
     "primaryButton": "Take Gut Quiz",
-    "secondaryButton": "Watch Our Video"
+    "secondaryButton": "Watch Our Videos"
   },
   "videos": [
     { "title": "Gut Problems Subsided with Care at Natural Rx Clinic", "youtubeId": "p7PfVCxmZIQ", "thumbnail": "/assets/home/testimonial-video-1.webp" },

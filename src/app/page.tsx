@@ -41,9 +41,10 @@ export default async function HomePage() {
               {content.hero.line1} <span className="text-[#129562]">{content.hero.line2} {content.hero.line3}</span>
             </h1>
             <p className="mx-auto mt-5 max-w-[650px] text-[16px] leading-7 text-[#123b67]">{content.hero.description}</p>
+            <Link href="/wealth-without-health-is-worthless/" className="mt-3 inline-flex items-center gap-2 text-[15px] font-bold text-[#087c58] underline decoration-2 underline-offset-4 hover:text-[#07528c]">{content.hero.findOutWhy} <ArrowRight className="h-4 w-4" /></Link>
             <div className="mt-6 flex flex-wrap justify-center gap-4">
               <GreenButton href={headerActions.quiz.href}>{content.hero.primaryButton}</GreenButton>
-              <Link href="/videos/" className="home-outline-button"><span className="flex h-5 w-5 items-center justify-center rounded-full border border-current"><Play className="ml-0.5 h-2.5 w-2.5 fill-current" /></span>{content.hero.secondaryButton}</Link>
+              <a href={runtimeSettings.site.social.youtube} target="_blank" rel="noopener noreferrer" className="home-outline-button"><span className="flex h-5 w-5 items-center justify-center rounded-full border border-current"><Play className="ml-0.5 h-2.5 w-2.5 fill-current" /></span>{content.hero.secondaryButton}</a>
             </div>
           </div>
         </div>

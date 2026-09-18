@@ -8,6 +8,8 @@ import { DoctorBio } from "@/components/site/doctor-bio";
 import { ConsultationPage } from "@/components/site/consultation-page";
 import { JsonLd, breadcrumbSchema, personSchema, articleSchema } from "@/components/site/json-ld";
 import { site } from "@/config/site";
+import { ContentPage } from "@/components/site/content-page";
+import { CoursesIndex } from "@/components/site/courses-index";
 import { findPublishedEntry } from "@/lib/runtime-content";
 import type { BlogFrontmatter, PageFrontmatter } from "@/lib/schemas";
 import type { ContentEntry } from "@/lib/content";
@@ -108,21 +110,22 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     );
   }
 
+  if (entry.slug === "courses") return <CoursesIndex />;
+
   // Page / condition / lab test
-  const showCta = fm.type === "condition" || fm.type === "labtest";
+  const pageFrontmatter = fm as PageFrontmatter;
+  const showCta = pageFrontmatter.type === "condition" || pageFrontmatter.type === "labtest";
+  const courseSlugs = new Set(["7-day-poop-challenge", "blue-zone-diet-course", "carbs-from-heaven-carbs-from-hell", "stool-transit-time-course", "supernatural-morning", "the-7-causes-of-illness", "gut-community", "dr-krystosiks-90-days-gut-health-program"]);
   return (
     <>
       <JsonLd data={personSchema} />
       <JsonLd
         data={breadcrumbSchema([
           { name: "Home", url: `${site.url}/` },
-          { name: fm.title, url },
+          { name: pageFrontmatter.title, url },
         ])}
       />
-      <article className="container max-w-3xl py-12">
-        <h1 className="text-4xl font-bold text-secondary">{fm.title}</h1>
-        <Prose source={entry.body} className="mt-6" />
-      </article>
+      <ContentPage frontmatter={pageFrontmatter} body={entry.body} slug={entry.slug} isCourse={courseSlugs.has(entry.slug)} />
       {showCta && <ConsultationCTA />}
     </>
   );

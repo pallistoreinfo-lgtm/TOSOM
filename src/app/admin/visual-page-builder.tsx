@@ -77,6 +77,7 @@ export function VisualPageBuilder({ json, document, onJsonChange, onDocumentChan
               onJsonChange({ ...json, hero: { ...hero, line1: lines[0] || "", line2: rest, line3: "" } });
             }} className="mx-auto mt-3 max-w-3xl whitespace-pre-line text-3xl font-extrabold leading-tight sm:text-5xl" />
             <EditableText as="p" multiline value={String(hero.description || "")} onChange={(v) => updateSection("hero", "description", v)} className="mx-auto mt-5 max-w-2xl text-base leading-7 text-[#365d81]" />
+            {hero.findOutWhy !== undefined && <EditableText as="p" value={String(hero.findOutWhy || "")} onChange={(v) => updateSection("hero", "findOutWhy", v)} className="mx-auto mt-3 w-fit font-bold text-emerald-700 underline" />}
             <div className="mt-6 flex justify-center gap-3"><EditableText as="span" value={String(hero.primaryButton || "")} onChange={(v) => updateSection("hero", "primaryButton", v)} className="rounded-full bg-emerald-700 px-6 py-3 font-bold text-white" /><EditableText as="span" value={String(hero.secondaryButton || "")} onChange={(v) => updateSection("hero", "secondaryButton", v)} className="rounded-full border border-[#082a55] px-6 py-3 font-bold" /></div>
           </div>
         </div>
@@ -114,4 +115,3 @@ export function VisualPageBuilder({ json, document, onJsonChange, onDocumentChan
 
   return <div className="p-8 text-center text-sm text-slate-500">Visual page editing is available for pages and the homepage. Use the settings editor for site-wide navigation and contact details.</div>;
 }
-

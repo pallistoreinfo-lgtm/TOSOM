@@ -1,0 +1,24 @@
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
+
+const courses = [
+  { title: "Gut Restoration Roadmap", href: "/dr-krystosiks-90-days-gut-health-program/", image: "/assets/home/gut-restoration-roadmap.webp", value: "$399 regular", description: "Follow Dr. Krystosik’s practical, step-by-step system to restore the gut, recharge energy, and reclaim your life." },
+  { title: "GUT RESTORATION COMMUNITY", href: "/gut-community/", image: "/assets/images/2025/08/Skool-banner.jpg", value: "$177 yearly", description: "Get ongoing education, encouragement, resources, and support from Dr. Krystosik and a health-focused community." },
+  { title: "Carbs From Heaven, Carbs From Hell", href: "/carbs-from-heaven-carbs-from-hell/", image: "/assets/images/2025/03/6.jpg", value: "$39", description: "Choose carbohydrates that support your microbiome, blood sugar, energy, and long-term health." },
+  { title: "The 7 Causes of Illness", href: "/the-7-causes-of-illness/", image: "/assets/images/2025/03/5.jpg", value: "$119", description: "Discover overlooked root causes of chronic symptoms and practical ways to support natural healing." },
+  { title: "Stool Transit Time", href: "/stool-transit-time-course/", image: "/assets/images/2025/03/4.jpg", value: "$139", description: "Use a simple at-home measurement to understand digestive speed, absorption, and bowel function." },
+  { title: "Supernatural Morning", href: "/supernatural-morning/", image: "/assets/images/2025/03/7.jpg", value: "$199", description: "Build a purposeful morning routine for mindset, movement, nourishment, energy, and resilience." },
+  { title: "Blue Zone Diet", href: "/blue-zone-diet-course/", image: "/assets/images/2025/03/2-3.jpg", description: "Apply the food and lifestyle patterns shared by some of the world’s longest-living populations." },
+  { title: "7-Day Poop Challenge", href: "/7-day-poop-challenge/", image: "/assets/images/2025/04/Green-Minimalist-Lets-Eat-Healthy-Food-Instagram-Post-1.jpg", description: "Track and understand what daily bowel habits reveal about your gut and overall health." },
+];
+
+export function CoursesIndex() {
+  return (
+    <div className="bg-gradient-to-b from-[#eefaf7] to-white pb-16">
+      <section className="container max-w-6xl py-12 text-center sm:py-16"><p className="text-xs font-bold uppercase tracking-[.2em] text-emerald-700">Practical education for lifelong health</p><h1 className="mt-3 text-4xl font-extrabold text-[#082f52] sm:text-5xl">Courses</h1><p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-slate-600">Build a clearer understanding of your gut, food, habits, and body with practical courses developed from Dr. Krystosik’s clinical experience.</p></section>
+      <section className="container max-w-6xl"><div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">{courses.map((course) => <article key={course.href} className="group overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-[0_15px_45px_rgba(8,47,82,.08)] transition hover:-translate-y-1 hover:shadow-xl"><Link href={course.href} className="relative block aspect-[16/10] overflow-hidden bg-slate-100"><Image src={course.image} alt={course.title} fill className="object-cover transition duration-500 group-hover:scale-105" sizes="(max-width:768px) 100vw, 33vw" /></Link><div className="p-6">{course.value && <p className="mb-2 flex items-center gap-2 text-sm font-bold text-emerald-700"><CheckCircle2 className="h-4 w-4" />Course value {course.value}</p>}<h2 className="text-2xl font-bold leading-tight text-[#083b59]">{course.title}</h2><p className="mt-3 leading-7 text-slate-600">{course.description}</p><Link href={course.href} className="mt-5 inline-flex items-center gap-2 font-bold text-emerald-700">Explore course <ArrowRight className="h-4 w-4" /></Link></div></article>)}</div></section>
+      <section className="container mt-12 max-w-6xl"><div className="rounded-3xl bg-gradient-to-r from-[#073a5a] to-[#08765f] p-7 text-white sm:p-10"><p className="text-sm font-bold uppercase tracking-widest text-emerald-200">One system · Two options</p><h2 className="mt-2 text-3xl font-extrabold">Get the courses inside a Gut Restoration package</h2><p className="mt-3 max-w-3xl text-white/80">The Jump Start Plan bundles core courses, resources, community access, and a consultation. The Root Cause Solution adds advanced testing, more courses, and extended physician support.</p><div className="mt-6 flex flex-wrap gap-3"><Link href="/jump-start-plan/" className="rounded-full bg-white px-5 py-3 font-bold text-[#075b52]">Jump Start Plan — $99</Link><Link href="/root-cause-solution/" className="rounded-full border border-white/40 px-5 py-3 font-bold">Root Cause Solution — $3,999</Link></div></div></section>
+    </div>
+  );
+}

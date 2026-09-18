@@ -31,10 +31,34 @@ function DesktopNav({ navItems }: { navItems: NavItem[] }) {
   );
 }
 
+function MobileNavItem({ item, depth = 0 }: { item: NavItem; depth?: number }) {
+  if (item.href) {
+    return (
+      <SheetClose asChild>
+        <Link
+          href={item.href}
+          className={depth === 0 ? "block rounded-lg px-3 py-2.5 font-medium hover:bg-[#eef8f5]" : "block py-1.5 text-sm font-normal text-muted-foreground hover:text-[#087c58]"}
+        >
+          {item.label}
+        </Link>
+      </SheetClose>
+    );
+  }
+
+  return (
+    <div className={depth === 0 ? "px-3 py-2.5 font-semibold" : "py-1.5 text-sm font-semibold text-[#12375e]"}>
+      {item.label}
+      <div className="mt-1 border-l border-slate-200 pl-3">
+        {item.children?.map((child) => <MobileNavItem key={child.label} item={child} depth={depth + 1} />)}
+      </div>
+    </div>
+  );
+}
+
 function MobileNav({ navItems, settings }: { navItems: NavItem[]; settings: SiteSettings }) {
   const headerActions = settings.headerActions;
   return (
-    <Sheet><SheetTrigger asChild><Button variant="ghost" size="icon" className="xl:hidden" aria-label="Open menu"><Menu className="h-6 w-6" /></Button></SheetTrigger><SheetContent side="right"><SheetTitle className="sr-only">Menu</SheetTitle><nav className="mt-8 flex flex-col gap-1">{navItems.map((item) => item.href ? <SheetClose asChild key={item.label}><Link href={item.href} className="rounded-lg px-3 py-2.5 font-medium hover:bg-[#eef8f5]">{item.label}</Link></SheetClose> : <div key={item.label} className="px-3 py-2.5 font-semibold">{item.label}<div className="mt-1 border-l pl-3">{item.children?.map((child) => child.href ? <SheetClose asChild key={child.label}><Link href={child.href} className="block py-1.5 text-sm font-normal text-muted-foreground">{child.label}</Link></SheetClose> : null)}</div></div>)}</nav><div className="mt-6 grid gap-2 border-t pt-5"><Button asChild className="bg-[#07835e]"><Link href={headerActions.quiz.href}>{headerActions.quiz.label}</Link></Button><Button asChild className="bg-[#07528c]"><Link href={headerActions.consultation.href}>{headerActions.consultation.label}</Link></Button></div></SheetContent></Sheet>
+    <Sheet><SheetTrigger asChild><Button variant="ghost" size="icon" className="xl:hidden" aria-label="Open menu"><Menu className="h-6 w-6" /></Button></SheetTrigger><SheetContent side="right"><SheetTitle className="sr-only">Menu</SheetTitle><nav className="mt-8 flex flex-col gap-1">{navItems.map((item) => <MobileNavItem key={item.label} item={item} />)}</nav><div className="mt-6 grid gap-2 border-t pt-5"><Button asChild className="bg-[#07835e]"><Link href={headerActions.quiz.href}>{headerActions.quiz.label}</Link></Button><Button asChild className="bg-[#07528c]"><Link href={headerActions.consultation.href}>{headerActions.consultation.label}</Link></Button></div></SheetContent></Sheet>
   );
 }
 
