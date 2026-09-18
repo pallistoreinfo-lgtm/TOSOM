@@ -1,5 +1,7 @@
 import settings from "../../content/site.json";
 
+export const siteSettings = settings;
+
 export type NavItem = {
   label: string;
   href?: string;

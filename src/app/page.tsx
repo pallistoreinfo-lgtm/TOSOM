@@ -7,7 +7,7 @@ import {
 import homeContent from "../../content/home.json";
 import { getRuntimeJson } from "@/lib/runtime-content";
 import { TestimonialVideos } from "@/components/site/testimonial-videos";
-import { headerActions } from "@/config/site";
+import { siteSettings } from "@/config/site";
 
 const planIcons = { lab: FlaskConical, diet: Apple, supplements: Pill, stress: PersonStanding };
 
@@ -27,6 +27,8 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const content = await getRuntimeJson("content/home.json", homeContent);
+  const runtimeSettings = await getRuntimeJson("content/site.json", siteSettings);
+  const headerActions = runtimeSettings.headerActions;
   return (
     <div className="overflow-hidden bg-white text-[#082a55]">
       <section className="relative overflow-hidden bg-[#f8f4ed]">

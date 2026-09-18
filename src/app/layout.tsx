@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { site } from "@/config/site";
+import { site, siteSettings } from "@/config/site";
+import { getRuntimeJson } from "@/lib/runtime-content";
 import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
 
@@ -20,11 +21,12 @@ export const metadata: Metadata = {
   description: site.description,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const runtimeSettings = await getRuntimeJson("content/site.json", siteSettings);
   return (
     <html
       lang="en"
@@ -36,9 +38,9 @@ export default function RootLayout({
       }
     >
       <body>
-        <Header />
+        <Header settings={runtimeSettings} />
         <main className="min-h-screen">{children}</main>
-        <Footer />
+        <Footer settings={runtimeSettings} />
       </body>
     </html>
   );
