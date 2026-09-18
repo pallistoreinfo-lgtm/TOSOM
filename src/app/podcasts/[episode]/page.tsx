@@ -5,6 +5,17 @@ import { buildMetadata } from "@/lib/seo";
 import { Prose } from "@/components/site/mdx";
 import { JsonLd, breadcrumbSchema } from "@/components/site/json-ld";
 import { site } from "@/config/site";
+import { findPublishedEntry } from "@/lib/runtime-content";
+import type { ContentEntry } from "@/lib/content";
+import type { PodcastFrontmatter } from "@/lib/schemas";
+
+export const dynamic = "force-dynamic";
+
+async function resolveEpisode(slug: string) {
+  const published = await findPublishedEntry(slug);
+  if (published?.collection === "podcast") return published.entry as unknown as ContentEntry<PodcastFrontmatter>;
+  return getPodcastEpisodes().find((entry) => entry.slug === slug);
+}
 
 export function generateStaticParams() {
   return getPodcastEpisodes().map((ep) => ({ episode: ep.slug }));
@@ -12,7 +23,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ episode: string }> }): Promise<Metadata> {
   const { episode } = await params;
-  const ep = getPodcastEpisodes().find((e) => e.slug === episode);
+  const ep = await resolveEpisode(episode);
   if (!ep) return {};
   return buildMetadata({
     title: ep.frontmatter.title,
@@ -25,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ episode: 
 
 export default async function EpisodePage({ params }: { params: Promise<{ episode: string }> }) {
   const { episode } = await params;
-  const ep = getPodcastEpisodes().find((e) => e.slug === episode);
+  const ep = await resolveEpisode(episode);
   if (!ep) notFound();
 
   const fm = ep.frontmatter;

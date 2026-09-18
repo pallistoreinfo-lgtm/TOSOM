@@ -29,3 +29,6 @@ next-env.d.ts
 
 # migration scratch (raw HTML dumps kept out of git; reference shots are committed)
 /migration/.cache/
+
+# Local fallback for admin drafts/published content (production uses cms-content branch)
+/.cms/

@@ -8,10 +8,18 @@ import { DoctorBio } from "@/components/site/doctor-bio";
 import { ConsultationPage } from "@/components/site/consultation-page";
 import { JsonLd, breadcrumbSchema, personSchema, articleSchema } from "@/components/site/json-ld";
 import { site } from "@/config/site";
+import { findPublishedEntry } from "@/lib/runtime-content";
+import type { BlogFrontmatter, PageFrontmatter } from "@/lib/schemas";
+import type { ContentEntry } from "@/lib/content";
+
+export const dynamic = "force-dynamic";
 
 // Blog posts and WP pages share the flat `/slug/` namespace, so one route
 // resolves both. Blog slugs win if there's ever a collision.
-function resolve(slug: string) {
+async function resolve(slug: string) {
+  const published = await findPublishedEntry(slug);
+  if (published?.collection === "blog") return { kind: "post" as const, entry: published.entry as unknown as ContentEntry<BlogFrontmatter> };
+  if (published && published.collection !== "podcast") return { kind: "page" as const, entry: published.entry as unknown as ContentEntry<PageFrontmatter> };
   const post = getBlogPosts().find((p) => p.slug === slug);
   if (post) return { kind: "post" as const, entry: post };
   const page = getAllPages().find((p) => p.slug === slug);
@@ -28,7 +36,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const found = resolve(slug);
+  const found = await resolve(slug);
   if (!found) return {};
   const fm = found.entry.frontmatter;
   return buildMetadata({
@@ -42,7 +50,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const found = resolve(slug);
+  const found = await resolve(slug);
   if (!found) notFound();
 
   const { entry } = found;

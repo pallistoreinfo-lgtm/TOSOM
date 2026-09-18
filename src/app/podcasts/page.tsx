@@ -3,6 +3,9 @@ import type { Metadata } from "next";
 import { getPodcastEpisodes } from "@/lib/content";
 import { Card, CardContent } from "@/components/ui/card";
 import { site } from "@/config/site";
+import { applyPublishedCollection } from "@/lib/runtime-content";
+
+export const dynamic = "force-dynamic";
 
 function formatEpisodeDate(value: string) {
   const [year, month, day] = value.slice(0, 10).split("-").map(Number);
@@ -21,8 +24,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://theothersideofmedicine.com/podcasts/" },
 };
 
-export default function PodcastsPage() {
-  const episodes = getPodcastEpisodes();
+export default async function PodcastsPage() {
+  const episodes = (await applyPublishedCollection("podcast", getPodcastEpisodes()))
+    .sort((a, b) => Date.parse(b.frontmatter.date) - Date.parse(a.frontmatter.date));
   return (
     <div className="container max-w-4xl py-12">
       <h1 className="text-4xl font-bold text-secondary">Podcast</h1>

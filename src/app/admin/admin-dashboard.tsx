@@ -20,6 +20,7 @@ import {
   RefreshCw,
   RotateCcw,
   Save,
+  Send,
   Search,
   Settings,
   Stethoscope,
@@ -29,6 +30,7 @@ import {
 import { JsonContentEditor } from "./json-content-editor";
 import { MediaLibrary } from "./media-library";
 import { StructuredEditor, type StructuredDocument } from "./structured-editor";
+import { VisualPageBuilder } from "./visual-page-builder";
 
 type AdminFile = { path: string; size: number };
 type Collection = "home" | "settings" | "pages" | "blog" | "podcast" | "conditions" | "labtests";
@@ -87,7 +89,8 @@ export function AdminDashboard() {
   const [savedDocumentData, setSavedDocumentData] = useState<StructuredDocument | null>(null);
   const [jsonData, setJsonData] = useState<Record<string, unknown> | null>(null);
   const [savedJsonData, setSavedJsonData] = useState<Record<string, unknown> | null>(null);
-  const [editorMode, setEditorMode] = useState<"form" | "visual" | "raw">("form");
+  const [editorMode, setEditorMode] = useState<"builder" | "form" | "visual" | "raw">("builder");
+  const [isPublished, setIsPublished] = useState(false);
   const [search, setSearch] = useState("");
   const [busy, setBusy] = useState(true);
   const [status, setStatus] = useState("");
@@ -146,7 +149,8 @@ export function AdminDashboard() {
       setSavedDocumentData(structured);
       setJsonData(parsedJson);
       setSavedJsonData(parsedJson);
-      setEditorMode(structured ? "form" : parsedJson ? "visual" : "raw");
+      setIsPublished(Boolean(result.published));
+      setEditorMode(structured || filePath === "content/home.json" ? "builder" : parsedJson ? "visual" : "raw");
       setShowNavigator(false);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Could not open the file.");
@@ -155,8 +159,17 @@ export function AdminDashboard() {
     }
   }
 
-  async function save() {
-    if (!selected || !dirty) return;
+  function serializedPayload(mode: "draft" | "publish") {
+    return editorMode === "form" || editorMode === "builder" ? (documentData
+      ? { path: selected, document: documentData, mode }
+      : jsonData ? { path: selected, content: `${JSON.stringify(jsonData, null, 2)}\n`, mode } : { path: selected, content, mode })
+      : editorMode === "visual" && jsonData
+        ? { path: selected, content: `${JSON.stringify(jsonData, null, 2)}\n`, mode }
+        : { path: selected, content, mode };
+  }
+
+  async function save(mode: "draft" | "publish" = "draft") {
+    if (!selected || (mode === "draft" && !dirty)) return;
     setBusy(true);
     setError("");
     setStatus("");
@@ -164,11 +177,7 @@ export function AdminDashboard() {
       const result = await api("/api/admin/content", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(editorMode === "form" && documentData
-          ? { path: selected, document: documentData }
-          : editorMode === "visual" && jsonData
-            ? { path: selected, content: `${JSON.stringify(jsonData, null, 2)}\n` }
-            : { path: selected, content }),
+        body: JSON.stringify(serializedPayload(mode)),
       });
       const savedRaw = String(result.content || content);
       setContent(savedRaw);
@@ -182,9 +191,12 @@ export function AdminDashboard() {
         setSavedJsonData(parsed);
       }
       else await loadFiles();
-      setStatus("Saved to GitHub. Vercel will publish the change automatically.");
+      if (mode === "publish") setIsPublished(true);
+      setStatus(mode === "publish"
+        ? "Published. The live website is updated without a Vercel deployment."
+        : "Draft saved privately. The live website has not changed.");
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Save failed.");
+      setError(caught instanceof Error ? caught.message : mode === "publish" ? "Publish failed." : "Save failed.");
     } finally {
       setBusy(false);
     }
@@ -284,7 +296,7 @@ export function AdminDashboard() {
     const shortcut = (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
         event.preventDefault();
-        if (!busy && dirty) void save();
+        if (!busy && dirty) void save("draft");
       }
     };
     window.addEventListener("keydown", shortcut);
@@ -354,20 +366,20 @@ export function AdminDashboard() {
           {status && <div className="m-5 flex items-start gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />{status}</div>}
 
           {!selected ? <div className="p-5 sm:p-8">
-            <div className="rounded-2xl bg-gradient-to-br from-[#082f52] to-[#08765f] p-6 text-white sm:p-8"><p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-200">Content overview</p><h2 className="mt-2 text-3xl font-bold">Everything in one place</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-sky-100">Choose an item from the content navigator, create a page, or manage images. Changes save directly to GitHub and deploy through Vercel.</p><div className="mt-5 flex flex-wrap gap-3"><button onClick={() => setShowCreate(true)} className="rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-[#075b52]">Create content</button><button onClick={() => setShowMedia(true)} className="rounded-xl border border-white/25 bg-white/10 px-4 py-2.5 text-sm font-bold">Open media library</button></div></div>
+            <div className="rounded-2xl bg-gradient-to-br from-[#082f52] to-[#08765f] p-6 text-white sm:p-8"><p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-200">Content overview</p><h2 className="mt-2 text-3xl font-bold">Everything in one place</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-sky-100">Open a page in the visual builder, click its text to edit, save a private draft, then publish when it is ready. Content publishing does not rebuild the website.</p><div className="mt-5 flex flex-wrap gap-3"><button onClick={() => setShowCreate(true)} className="rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-[#075b52]">Create content</button><button onClick={() => setShowMedia(true)} className="rounded-xl border border-white/25 bg-white/10 px-4 py-2.5 text-sm font-bold">Open media library</button></div></div>
             <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{(["pages", "blog", "podcast", "conditions"] as Collection[]).map((collection) => { const Icon = collectionIcons[collection]; return <button key={collection} onClick={() => setShowNavigator(true)} className="rounded-2xl border bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><Icon className="h-5 w-5" /></span><strong className="mt-4 block text-2xl text-[#082a55]">{grouped[collection].length}</strong><span className="text-sm text-slate-500">{collectionNames[collection]}</span></button>; })}</div>
           </div> : <>
             <div className="border-b bg-white px-4 py-4 sm:px-5">
               <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="min-w-0"><div className="flex items-center gap-2"><p className="truncate text-lg font-bold capitalize text-[#082a55]">{displayName(selected)}</p>{dirty ? <span className="rounded-full bg-amber-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-amber-800">Unsaved</span> : <span className="rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-emerald-700">Saved</span>}</div><p className="mt-1 truncate text-xs text-slate-500">{selected}</p></div>
-                <div className="flex flex-wrap gap-2"><a href={previewUrl} target="_blank" rel="noreferrer" className="inline-flex h-10 items-center gap-2 rounded-xl border px-3 text-sm font-semibold hover:bg-slate-50"><ExternalLink className="h-4 w-4" />Preview</a><button onClick={copyPreviewUrl} className="inline-flex h-10 items-center gap-2 rounded-xl border px-3 text-sm font-semibold hover:bg-slate-50" title="Copy public page URL"><Copy className="h-4 w-4" /><span className="hidden sm:inline">Copy URL</span></button>{dirty && <button onClick={resetChanges} className="inline-flex h-10 items-center gap-2 rounded-xl border px-3 text-sm font-semibold text-amber-800 hover:bg-amber-50"><RotateCcw className="h-4 w-4" />Reset</button>}{selected.endsWith(".mdx") && <button onClick={duplicate} disabled={busy || dirty} className="inline-flex h-10 items-center gap-2 rounded-xl border px-3 text-sm font-semibold disabled:opacity-50"><Copy className="h-4 w-4" /><span className="hidden xl:inline">Duplicate</span></button>}{selected !== "content/home.json" && selected !== "content/site.json" && <button onClick={remove} disabled={busy} className="inline-flex h-10 items-center gap-2 rounded-xl border border-red-200 px-3 text-sm font-semibold text-red-700 disabled:opacity-50"><Trash2 className="h-4 w-4" /><span className="hidden xl:inline">Delete</span></button>}<button onClick={save} disabled={busy || !dirty} className="inline-flex h-10 items-center gap-2 rounded-xl bg-[#07835e] px-4 text-sm font-bold text-white shadow-sm hover:bg-[#096f53] disabled:cursor-not-allowed disabled:opacity-40">{busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}Save</button></div>
+                <div className="min-w-0"><div className="flex items-center gap-2"><p className="truncate text-lg font-bold capitalize text-[#082a55]">{displayName(selected)}</p>{dirty ? <span className="rounded-full bg-amber-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-amber-800">Unsaved changes</span> : <span className="rounded-full bg-sky-50 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-sky-700">Draft saved</span>}{isPublished && <span className="rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-emerald-700">Live</span>}</div><p className="mt-1 truncate text-xs text-slate-500">{selected}</p></div>
+                <div className="flex flex-wrap gap-2"><a href={previewUrl} target="_blank" rel="noreferrer" className="inline-flex h-10 items-center gap-2 rounded-xl border px-3 text-sm font-semibold hover:bg-slate-50"><ExternalLink className="h-4 w-4" />Live page</a><button onClick={copyPreviewUrl} className="inline-flex h-10 items-center gap-2 rounded-xl border px-3 text-sm font-semibold hover:bg-slate-50" title="Copy public page URL"><Copy className="h-4 w-4" /><span className="hidden sm:inline">Copy URL</span></button>{dirty && <button onClick={resetChanges} className="inline-flex h-10 items-center gap-2 rounded-xl border px-3 text-sm font-semibold text-amber-800 hover:bg-amber-50"><RotateCcw className="h-4 w-4" />Reset</button>}{selected.endsWith(".mdx") && <button onClick={duplicate} disabled={busy || dirty} className="inline-flex h-10 items-center gap-2 rounded-xl border px-3 text-sm font-semibold disabled:opacity-50"><Copy className="h-4 w-4" /><span className="hidden xl:inline">Duplicate</span></button>}{selected !== "content/home.json" && selected !== "content/site.json" && <button onClick={remove} disabled={busy} className="inline-flex h-10 items-center gap-2 rounded-xl border border-red-200 px-3 text-sm font-semibold text-red-700 disabled:opacity-50"><Trash2 className="h-4 w-4" /><span className="hidden xl:inline">Delete</span></button>}<button onClick={() => save("draft")} disabled={busy || !dirty} className="inline-flex h-10 items-center gap-2 rounded-xl border border-emerald-700 bg-white px-4 text-sm font-bold text-emerald-800 disabled:cursor-not-allowed disabled:opacity-40">{busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}Save draft</button><button onClick={() => save("publish")} disabled={busy} className="inline-flex h-10 items-center gap-2 rounded-xl bg-[#07835e] px-4 text-sm font-bold text-white shadow-sm hover:bg-[#096f53] disabled:opacity-40"><Send className="h-4 w-4" />Publish</button></div>
               </div>
-              <p className="mt-3 text-[11px] text-slate-400">Tip: press Ctrl/⌘ + S to save quickly.</p>
+              <p className="mt-3 text-[11px] text-slate-400">Save draft keeps the work private. Publish updates the live page immediately—no Vercel deployment.</p>
             </div>
 
-            {(documentData || jsonData) && <div className="flex flex-wrap items-center gap-2 border-b bg-slate-50 px-4 py-3 sm:px-5">{documentData && <button onClick={() => setEditorMode("form")} disabled={dirty && editorMode !== "form"} className={`rounded-xl px-4 py-2 text-sm font-bold ${editorMode === "form" ? "bg-white text-emerald-800 shadow-sm ring-1 ring-slate-200" : "text-slate-500"}`}>Easy editor</button>}{jsonData && <button onClick={() => setEditorMode("visual")} disabled={dirty && editorMode !== "visual"} className={`rounded-xl px-4 py-2 text-sm font-bold ${editorMode === "visual" ? "bg-white text-emerald-800 shadow-sm ring-1 ring-slate-200" : "text-slate-500"}`}>Visual editor</button>}<button onClick={() => setEditorMode("raw")} disabled={dirty && editorMode !== "raw"} className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold ${editorMode === "raw" ? "bg-white text-emerald-800 shadow-sm ring-1 ring-slate-200" : "text-slate-500"}`}><Code2 className="h-4 w-4" />Advanced source</button>{dirty && <span className="ml-auto text-xs font-semibold text-amber-700">Save or reset before switching modes</span>}</div>}
+            {(documentData || jsonData) && <div className="flex flex-wrap items-center gap-2 border-b bg-slate-50 px-4 py-3 sm:px-5">{(documentData || selected === "content/home.json") && <button onClick={() => setEditorMode("builder")} disabled={dirty && editorMode !== "builder"} className={`rounded-xl px-4 py-2 text-sm font-bold ${editorMode === "builder" ? "bg-white text-emerald-800 shadow-sm ring-1 ring-slate-200" : "text-slate-500"}`}>Visual page builder</button>}{documentData && <button onClick={() => setEditorMode("form")} disabled={dirty && editorMode !== "form"} className={`rounded-xl px-4 py-2 text-sm font-bold ${editorMode === "form" ? "bg-white text-emerald-800 shadow-sm ring-1 ring-slate-200" : "text-slate-500"}`}>Page settings</button>}{jsonData && <button onClick={() => setEditorMode("visual")} disabled={dirty && editorMode !== "visual"} className={`rounded-xl px-4 py-2 text-sm font-bold ${editorMode === "visual" ? "bg-white text-emerald-800 shadow-sm ring-1 ring-slate-200" : "text-slate-500"}`}>All fields</button>}<button onClick={() => setEditorMode("raw")} disabled={dirty && editorMode !== "raw"} className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold ${editorMode === "raw" ? "bg-white text-emerald-800 shadow-sm ring-1 ring-slate-200" : "text-slate-500"}`}><Code2 className="h-4 w-4" />Advanced source</button>{dirty && <span className="ml-auto text-xs font-semibold text-amber-700">Save or reset before switching modes</span>}</div>}
 
-            {editorMode === "form" && documentData ? <StructuredEditor document={documentData} onChange={setDocumentData} /> : editorMode === "visual" && jsonData ? <JsonContentEditor value={jsonData} onChange={setJsonData} /> : <><div className="border-b bg-amber-50 px-5 py-3 text-xs leading-5 text-amber-900"><strong>Advanced source:</strong> Use this only when you need direct control over the file syntax. Invalid formatting will be rejected before saving.</div><textarea aria-label="Content editor" spellCheck={false} className="min-h-[680px] w-full resize-y bg-[#0e1b2a] p-5 font-mono text-[14px] leading-6 text-slate-100 outline-none" value={content} onChange={(event) => setContent(event.target.value)} /></>}
+            {editorMode === "builder" ? <VisualPageBuilder json={selected === "content/home.json" ? jsonData : null} document={documentData} onJsonChange={setJsonData} onDocumentChange={setDocumentData} /> : editorMode === "form" && documentData ? <StructuredEditor document={documentData} onChange={setDocumentData} /> : editorMode === "visual" && jsonData ? <JsonContentEditor value={jsonData} onChange={setJsonData} /> : <><div className="border-b bg-amber-50 px-5 py-3 text-xs leading-5 text-amber-900"><strong>Advanced source:</strong> Use this only when you need direct control over the file syntax. Invalid formatting will be rejected before saving.</div><textarea aria-label="Content editor" spellCheck={false} className="min-h-[680px] w-full resize-y bg-[#0e1b2a] p-5 font-mono text-[14px] leading-6 text-slate-100 outline-none" value={content} onChange={(event) => setContent(event.target.value)} /></>}
           </>}
         </section>
       </main>

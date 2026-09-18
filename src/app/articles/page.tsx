@@ -3,6 +3,9 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { getBlogPosts } from "@/lib/content";
 import { Card, CardContent } from "@/components/ui/card";
+import { applyPublishedCollection } from "@/lib/runtime-content";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Articles",
@@ -11,8 +14,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://theothersideofmedicine.com/articles/" },
 };
 
-export default function ArticlesPage() {
-  const posts = getBlogPosts();
+export default async function ArticlesPage() {
+  const posts = (await applyPublishedCollection("blog", getBlogPosts()))
+    .sort((a, b) => a.frontmatter.date < b.frontmatter.date ? 1 : -1);
   return (
     <div className="container max-w-5xl py-12">
       <h1 className="text-4xl font-bold text-secondary">Articles</h1>

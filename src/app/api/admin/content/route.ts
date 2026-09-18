@@ -4,9 +4,10 @@ import { isAdmin, isSameOrigin } from "@/lib/admin-auth";
 import {
   deleteAdminFile,
   listAdminFiles,
+  publishAdminFile,
   readAdminFile,
   validateContentPath,
-  writeAdminFile,
+  writeAdminDraft,
 } from "@/lib/admin-content";
 import { schemaByCollection, type Collection } from "@/lib/schemas";
 
@@ -102,7 +103,7 @@ export async function PUT(request: Request) {
   if (!(await isAdmin())) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   if (!isSameOrigin(request)) return NextResponse.json({ error: "Invalid request origin." }, { status: 403 });
   try {
-    const body = (await request.json()) as { path?: string; content?: string; document?: { frontmatter?: Record<string, unknown>; body?: string } };
+    const body = (await request.json()) as { path?: string; content?: string; mode?: "draft" | "publish"; document?: { frontmatter?: Record<string, unknown>; body?: string } };
     if (!body.path) throw new Error("Path is required.");
     const filePath = validateContentPath(body.path);
     const content = body.document && body.document.frontmatter && typeof body.document.body === "string"
@@ -110,9 +111,11 @@ export async function PUT(request: Request) {
       : body.content;
     if (typeof content !== "string") throw new Error("Path and content are required.");
     validateDocument(filePath, content);
-    const title = filePath === "content/home.json" ? "homepage" : filePath === "content/site.json" ? "site settings" : matter(content).data.title || filePath;
-    const result = await writeAdminFile(filePath, content, `content(admin): update ${title}`);
-    return NextResponse.json({ ok: true, commit: result.commit.sha, content });
+    const mode = body.mode === "publish" ? "publish" : "draft";
+    const result = mode === "publish"
+      ? await publishAdminFile(filePath, content)
+      : await writeAdminDraft(filePath, content);
+    return NextResponse.json({ ok: true, commit: result.commit.sha, content, mode });
   } catch (error) {
     return errorResponse(error);
   }
@@ -142,7 +145,7 @@ export async function POST(request: Request) {
     if ("draft" in frontmatter) frontmatter.draft = true;
     const content = matter.stringify(parsed.content, frontmatter);
     validateDocument(destinationPath, content);
-    const result = await writeAdminFile(destinationPath, content, `content(admin): duplicate ${body.title.trim()}`);
+    const result = await writeAdminDraft(destinationPath, content);
     return NextResponse.json({ ok: true, commit: result.commit.sha, path: destinationPath });
   } catch (error) {
     return errorResponse(error);

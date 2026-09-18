@@ -28,7 +28,29 @@ function githubConfig() {
     owner: process.env.GITHUB_OWNER || "pallistoreinfo-lgtm",
     repo: process.env.GITHUB_REPO || "TOSOM",
     branch: process.env.GITHUB_BRANCH || "main",
+    contentBranch: process.env.GITHUB_CONTENT_BRANCH || "cms-content",
   };
+}
+
+const DRAFT_STORE = ".cms/drafts.json";
+const PUBLISHED_STORE = ".cms/published.json";
+type ContentStore = Record<string, string>;
+
+async function readLocalStore(kind: "draft" | "published"): Promise<ContentStore> {
+  try {
+    return JSON.parse(await fs.readFile(path.join(process.cwd(), `.cms/${kind === "draft" ? "drafts" : "published"}.json`), "utf8")) as ContentStore;
+  } catch {
+    return {};
+  }
+}
+
+async function writeLocalStore(kind: "draft" | "published", store: ContentStore) {
+  await fs.mkdir(path.join(process.cwd(), ".cms"), { recursive: true });
+  await fs.writeFile(
+    path.join(process.cwd(), `.cms/${kind === "draft" ? "drafts" : "published"}.json`),
+    `${JSON.stringify(store, null, 2)}\n`,
+    "utf8",
+  );
 }
 
 function githubHeaders(token: string) {
@@ -55,15 +77,101 @@ async function githubRequest<T>(url: string, init?: RequestInit): Promise<T> {
   return (await response.json()) as T;
 }
 
+async function ensureContentBranch() {
+  const config = githubConfig();
+  if (!config) return;
+  const refUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/git/ref/heads/${encodeURIComponent(config.contentBranch)}`;
+  try {
+    await githubRequest<unknown>(refUrl);
+    return;
+  } catch (error) {
+    if (!(error instanceof Error) || !error.message.includes("404")) throw error;
+  }
+  const mainRef = await githubRequest<{ object: { sha: string } }>(
+    `https://api.github.com/repos/${config.owner}/${config.repo}/git/ref/heads/${encodeURIComponent(config.branch)}`,
+  );
+  await githubRequest<unknown>(`https://api.github.com/repos/${config.owner}/${config.repo}/git/refs`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ref: `refs/heads/${config.contentBranch}`, sha: mainRef.object.sha }),
+  });
+}
+
+async function readRepoFile(repositoryPath: string, branch: string) {
+  const config = githubConfig();
+  if (!config) throw new Error("GitHub is not configured.");
+  const url = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${repositoryPath}?ref=${encodeURIComponent(branch)}`;
+  const result = await githubRequest<{ content: string; sha: string }>(url);
+  return {
+    content: Buffer.from(result.content.replaceAll("\n", ""), "base64").toString("utf8"),
+    sha: result.sha,
+  };
+}
+
+async function writeRepoFile(repositoryPath: string, branch: string, content: string, message: string) {
+  const config = githubConfig();
+  if (!config) throw new Error("GitHub is not configured.");
+  let sha: string | undefined;
+  try {
+    sha = (await readRepoFile(repositoryPath, branch)).sha;
+  } catch (error) {
+    if (!(error instanceof Error) || !error.message.includes("404")) throw error;
+  }
+  return githubRequest<{ commit: { sha: string } }>(
+    `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${repositoryPath}`,
+    {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message,
+        content: Buffer.from(content).toString("base64"),
+        branch,
+        ...(sha ? { sha } : {}),
+      }),
+    },
+  );
+}
+
+async function readStore(kind: "draft" | "published"): Promise<ContentStore> {
+  const config = githubConfig();
+  if (!config) return {};
+  await ensureContentBranch();
+  try {
+    const file = await readRepoFile(kind === "draft" ? DRAFT_STORE : PUBLISHED_STORE, config.contentBranch);
+    const parsed = JSON.parse(file.content) as unknown;
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed as ContentStore : {};
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("404")) return {};
+    throw error;
+  }
+}
+
+async function writeStore(kind: "draft" | "published", store: ContentStore, message: string) {
+  const config = githubConfig();
+  if (!config) throw new Error("GitHub is not configured.");
+  await ensureContentBranch();
+  return writeRepoFile(
+    kind === "draft" ? DRAFT_STORE : PUBLISHED_STORE,
+    config.contentBranch,
+    `${JSON.stringify(store, null, 2)}\n`,
+    message,
+  );
+}
+
 export async function listAdminFiles(): Promise<AdminFile[]> {
   const config = githubConfig();
   if (config) {
     const url = `https://api.github.com/repos/${config.owner}/${config.repo}/git/trees/${encodeURIComponent(config.branch)}?recursive=1`;
     const result = await githubRequest<{ tree: Array<{ path: string; type: string; size?: number }> }>(url);
-    return result.tree
+    const sourceFiles = result.tree
       .filter((item) => item.type === "blob" && CONTENT_PATH.test(item.path))
       .map((item) => ({ path: item.path, size: item.size || 0 }))
-      .sort((a, b) => a.path.localeCompare(b.path));
+    const [drafts, published] = await Promise.all([readStore("draft"), readStore("published")]);
+    const byPath = new Map(sourceFiles.map((file) => [file.path, file]));
+    for (const [filePath, content] of Object.entries({ ...published, ...drafts })) {
+      if (CONTENT_PATH.test(filePath)) byPath.set(filePath, { path: filePath, size: Buffer.byteLength(content, "utf8") });
+    }
+    return [...byPath.values()].sort((a, b) => a.path.localeCompare(b.path));
   }
 
   const files: AdminFile[] = [];
@@ -81,24 +189,76 @@ export async function listAdminFiles(): Promise<AdminFile[]> {
       files.push({ path: filePath, size: stat.size });
     }
   }
-  return files.sort((a, b) => a.path.localeCompare(b.path));
+  const [drafts, published] = await Promise.all([readLocalStore("draft"), readLocalStore("published")]);
+  const byPath = new Map(files.map((file) => [file.path, file]));
+  for (const [filePath, content] of Object.entries({ ...published, ...drafts })) {
+    if (CONTENT_PATH.test(filePath)) byPath.set(filePath, { path: filePath, size: Buffer.byteLength(content, "utf8") });
+  }
+  return [...byPath.values()].sort((a, b) => a.path.localeCompare(b.path));
 }
 
 export async function readAdminFile(filePath: string) {
   const safePath = validateContentPath(filePath);
   const config = githubConfig();
   if (config) {
-    const url = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${safePath}?ref=${encodeURIComponent(config.branch)}`;
-    const result = await githubRequest<{ content: string; sha: string }>(url);
-    return {
-      content: Buffer.from(result.content.replaceAll("\n", ""), "base64").toString("utf8"),
-      sha: result.sha,
-    };
+    const [drafts, published] = await Promise.all([readStore("draft"), readStore("published")]);
+    if (drafts[safePath] !== undefined) return { content: drafts[safePath], sha: "draft", state: "draft" as const, published: published[safePath] !== undefined };
+    if (published[safePath] !== undefined) return { content: published[safePath], sha: "published", state: "published" as const, published: true };
+    const result = await readRepoFile(safePath, config.branch);
+    return { ...result, state: "source" as const, published: false };
   }
+  const [drafts, published] = await Promise.all([readLocalStore("draft"), readLocalStore("published")]);
+  if (drafts[safePath] !== undefined) return { content: drafts[safePath], sha: "local-draft", state: "draft" as const, published: published[safePath] !== undefined };
+  if (published[safePath] !== undefined) return { content: published[safePath], sha: "local-published", state: "published" as const, published: true };
   return {
     content: await fs.readFile(path.join(process.cwd(), safePath), "utf8"),
     sha: "local",
   };
+}
+
+/** Save work privately without changing the live site or triggering a Vercel deployment. */
+export async function writeAdminDraft(filePath: string, content: string) {
+  const safePath = validateContentPath(filePath);
+  const config = githubConfig();
+  if (!config) {
+    const store = await readLocalStore("draft");
+    store[safePath] = content;
+    await writeLocalStore("draft", store);
+    return { commit: { sha: "local-draft" } };
+  }
+  const store = await readStore("draft");
+  store[safePath] = content;
+  return writeStore("draft", store, `cms(draft): save ${safePath}`);
+}
+
+/** Make saved work live immediately. The site reads this store at request time. */
+export async function publishAdminFile(filePath: string, content: string) {
+  const safePath = validateContentPath(filePath);
+  const config = githubConfig();
+  if (!config) {
+    const [published, drafts] = await Promise.all([readLocalStore("published"), readLocalStore("draft")]);
+    published[safePath] = content;
+    drafts[safePath] = content;
+    await Promise.all([writeLocalStore("published", published), writeLocalStore("draft", drafts)]);
+    return { commit: { sha: "local-published" } };
+  }
+  const [published, drafts] = await Promise.all([readStore("published"), readStore("draft")]);
+  published[safePath] = content;
+  drafts[safePath] = content;
+  const result = await writeStore("published", published, `cms(publish): ${safePath}`);
+  await writeStore("draft", drafts, `cms(draft): sync ${safePath}`);
+  return result;
+}
+
+export async function readPublishedAdminFile(filePath: string) {
+  const safePath = validateContentPath(filePath);
+  const config = githubConfig();
+  if (config) {
+    const published = await readStore("published");
+    if (published[safePath] !== undefined) return published[safePath];
+    return (await readRepoFile(safePath, config.branch)).content;
+  }
+  return fs.readFile(path.join(process.cwd(), safePath), "utf8");
 }
 
 export async function writeAdminFile(filePath: string, content: string, message: string) {
@@ -107,7 +267,7 @@ export async function writeAdminFile(filePath: string, content: string, message:
   if (config) {
     let sha: string | undefined;
     try {
-      sha = (await readAdminFile(safePath)).sha;
+      sha = (await readRepoFile(safePath, config.branch)).sha;
     } catch (error) {
       if (!(error instanceof Error) || !error.message.includes("404")) throw error;
     }
