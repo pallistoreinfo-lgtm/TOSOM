@@ -57,7 +57,7 @@ export function MediaLibrary({ onClose, onStatus, onError }: { onClose: () => vo
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ path: item.path }),
       });
-      onStatus("Image deleted. Vercel will update automatically.");
+      onStatus("Image deleted from the media library. No Vercel deployment was needed.");
       await refresh();
     } catch (error) {
       onError(error instanceof Error ? error.message : "Delete failed.");

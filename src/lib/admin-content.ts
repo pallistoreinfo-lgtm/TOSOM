@@ -309,18 +309,11 @@ export async function writeAdminMedia(filePath: string, bytes: Buffer) {
   if (bytes.byteLength > 5_000_000) throw new Error("Images must be smaller than 5 MB.");
   const config = githubConfig();
   if (config) {
-    const url = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${safePath}`;
-    return githubRequest<{ commit: { sha: string } }>(url, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message: `media(admin): upload ${safePath.split("/").at(-1)}`,
-        content: bytes.toString("base64"),
-        branch: config.branch,
-      }),
-    });
+    await ensureContentBranch();
+    const filename = safePath.split("/").at(-1)!;
+    return writeRepoFile(`.cms/media/${filename}`, config.contentBranch, bytes.toString("base64"), `cms(media): upload ${filename}`);
   }
-  const absolutePath = path.join(process.cwd(), safePath);
+  const absolutePath = path.join(process.cwd(), ".cms/media", safePath.split("/").at(-1)!);
   await fs.mkdir(path.dirname(absolutePath), { recursive: true });
   await fs.writeFile(absolutePath, bytes);
   return { commit: { sha: "local" } };
@@ -329,14 +322,23 @@ export async function writeAdminMedia(filePath: string, bytes: Buffer) {
 export async function listAdminMedia(): Promise<AdminMedia[]> {
   const config = githubConfig();
   if (config) {
-    const url = `https://api.github.com/repos/${config.owner}/${config.repo}/git/trees/${encodeURIComponent(config.branch)}?recursive=1`;
-    const result = await githubRequest<{ tree: Array<{ path: string; type: string; size?: number }> }>(url);
-    return result.tree
+    await ensureContentBranch();
+    const [source, cms] = await Promise.all([
+      githubRequest<{ tree: Array<{ path: string; type: string; size?: number }> }>(`https://api.github.com/repos/${config.owner}/${config.repo}/git/trees/${encodeURIComponent(config.branch)}?recursive=1`),
+      githubRequest<{ tree: Array<{ path: string; type: string; size?: number }> }>(`https://api.github.com/repos/${config.owner}/${config.repo}/git/trees/${encodeURIComponent(config.contentBranch)}?recursive=1`),
+    ]);
+    const existing = source.tree
       .filter((item) => item.type === "blob" && MEDIA_PATH.test(item.path))
       .map((item) => ({ path: item.path, size: item.size || 0, url: item.path.replace(/^public/, "") }))
-      .sort((a, b) => b.path.localeCompare(a.path));
+    const runtime = cms.tree
+      .filter((item) => item.type === "blob" && /^\.cms\/media\/[a-z0-9][a-z0-9._-]*\.(?:png|jpe?g|webp|gif)$/.test(item.path))
+      .map((item) => {
+        const filename = item.path.split("/").at(-1)!;
+        return { path: `public/assets/uploads/${filename}`, size: item.size || 0, url: `/api/media/${filename}` };
+      });
+    return [...runtime, ...existing].sort((a, b) => b.path.localeCompare(a.path));
   }
-  const directory = path.join(process.cwd(), "public/assets/uploads");
+  const directory = path.join(process.cwd(), ".cms/media");
   try {
     const entries = await fs.readdir(directory, { withFileTypes: true });
     const media: AdminMedia[] = [];
@@ -344,8 +346,8 @@ export async function listAdminMedia(): Promise<AdminMedia[]> {
       if (!entry.isFile()) continue;
       const filePath = `public/assets/uploads/${entry.name}`;
       if (!MEDIA_PATH.test(filePath)) continue;
-      const stat = await fs.stat(path.join(process.cwd(), filePath));
-      media.push({ path: filePath, size: stat.size, url: filePath.replace(/^public/, "") });
+      const stat = await fs.stat(path.join(directory, entry.name));
+      media.push({ path: filePath, size: stat.size, url: `/api/media/${entry.name}` });
     }
     return media.sort((a, b) => b.path.localeCompare(a.path));
   } catch (error) {
@@ -359,19 +361,32 @@ export async function deleteAdminMedia(filePath: string) {
   if (!MEDIA_PATH.test(safePath)) throw new Error("Invalid image path.");
   const config = githubConfig();
   if (config) {
-    const getUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${safePath}?ref=${encodeURIComponent(config.branch)}`;
+    await ensureContentBranch();
+    const filename = safePath.split("/").at(-1)!;
+    const repositoryPath = `.cms/media/${filename}`;
+    const getUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${repositoryPath}?ref=${encodeURIComponent(config.contentBranch)}`;
     const file = await githubRequest<{ sha: string }>(getUrl);
-    const url = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${safePath}`;
+    const url = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${repositoryPath}`;
     return githubRequest<{ commit: { sha: string } }>(url, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        message: `media(admin): delete ${safePath.split("/").at(-1)}`,
+        message: `cms(media): delete ${filename}`,
         sha: file.sha,
-        branch: config.branch,
+        branch: config.contentBranch,
       }),
     });
   }
-  await fs.unlink(path.join(process.cwd(), safePath));
+  await fs.unlink(path.join(process.cwd(), ".cms/media", safePath.split("/").at(-1)!));
   return { commit: { sha: "local" } };
+}
+
+export async function readRuntimeMedia(filename: string) {
+  if (!/^[a-z0-9][a-z0-9._-]*\.(?:png|jpe?g|webp|gif)$/.test(filename)) throw new Error("Invalid image name.");
+  const config = githubConfig();
+  if (config) {
+    const file = await readRepoFile(`.cms/media/${filename}`, config.contentBranch);
+    return Buffer.from(file.content, "base64");
+  }
+  return fs.readFile(path.join(process.cwd(), ".cms/media", filename));
 }

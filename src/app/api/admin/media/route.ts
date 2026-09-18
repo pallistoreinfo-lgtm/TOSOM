@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     const filename = `${Date.now()}-${cleanName}.${extension}`;
     const repositoryPath = `public/assets/uploads/${filename}`;
     await writeAdminMedia(repositoryPath, bytes);
-    return NextResponse.json({ ok: true, url: `/assets/uploads/${filename}` });
+    return NextResponse.json({ ok: true, url: `/api/media/${filename}` });
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Upload failed." },
