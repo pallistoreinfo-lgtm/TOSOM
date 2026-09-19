@@ -41,7 +41,7 @@
       { "label": "The 7 Causes of Illness", "href": "/the-7-causes-of-illness/" }
     ] },
     { "label": "Articles", "href": "/articles/" },
-    { "label": "Testimonies", "children": [{ "label": "Audio", "href": "/audio/" }, { "label": "Videos", "href": "/videos/" }] },
+    { "label": "Testimonies", "children": [{ "label": "Videos", "href": "/videos/" }, { "label": "Audio", "href": "/audio/" }] },
     { "label": "Podcast", "href": "/podcasts/" }
   ],
   "headerActions": {

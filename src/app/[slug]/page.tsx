@@ -10,6 +10,7 @@ import { JsonLd, breadcrumbSchema, personSchema, articleSchema } from "@/compone
 import { site } from "@/config/site";
 import { ContentPage } from "@/components/site/content-page";
 import { CoursesIndex } from "@/components/site/courses-index";
+import { PackagePage } from "@/components/site/package-page";
 import { findPublishedEntry } from "@/lib/runtime-content";
 import type { BlogFrontmatter, PageFrontmatter } from "@/lib/schemas";
 import type { ContentEntry } from "@/lib/content";
@@ -111,6 +112,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   }
 
   if (entry.slug === "courses") return <CoursesIndex />;
+  if (entry.slug === "jump-start-plan" || entry.slug === "root-cause-solution") return <PackagePage slug={entry.slug} />;
 
   // Page / condition / lab test
   const pageFrontmatter = fm as PageFrontmatter;

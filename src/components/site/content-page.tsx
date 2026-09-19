@@ -4,15 +4,13 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 import type { PageFrontmatter } from "@/lib/schemas";
 import { Prose } from "./mdx";
 
-const courseValues: Record<string, { value?: string; note: string }> = {
-  "dr-krystosiks-90-days-gut-health-program": { value: "$399 regular value", note: "The step-by-step foundation included in the Gut Restoration packages" },
-  "gut-community": { value: "$177 yearly value", note: "Community support is included in the Jump Start Plan" },
-  "carbs-from-heaven-carbs-from-hell": { value: "$39", note: "Included in both Gut Restoration Roadmap packages" },
-  "the-7-causes-of-illness": { value: "$119", note: "Included in both Gut Restoration Roadmap packages" },
-  "stool-transit-time-course": { value: "$139", note: "Included in both Gut Restoration Roadmap packages" },
-  "supernatural-morning": { value: "$199", note: "Included with the Root Cause Solution" },
-  "blue-zone-diet-course": { note: "Practical longevity nutrition for lasting gut health" },
-  "7-day-poop-challenge": { note: "A practical seven-day digestive health reset" },
+const courseValues: Record<string, { note: string }> = {
+  "dr-krystosiks-90-days-gut-health-program": { note: "The step-by-step foundation included in both Gut Restoration packages" },
+  "gut-community": { note: "One year of GUT RESTORATION COMMUNITY membership is included in both packages" },
+  "carbs-from-heaven-carbs-from-hell": { note: "Included as a bonus gift in both Gut Restoration packages" },
+  "the-7-causes-of-illness": { note: "Included as a bonus gift in both Gut Restoration packages" },
+  "stool-transit-time-course": { note: "Included as a bonus gift in both Gut Restoration packages" },
+  "supernatural-morning": { note: "Included as a bonus gift with the Root Cause Solution" },
 };
 
 function normalize(value: string) {
@@ -56,7 +54,7 @@ export function ContentPage({ frontmatter, body, slug, isCourse = false }: { fro
       </header>
       <div className="container max-w-5xl pt-8 sm:pt-10">
         {hero && <div className="relative mx-auto mb-8 aspect-[16/9] w-full overflow-hidden rounded-3xl bg-slate-100 shadow-[0_20px_60px_rgba(8,47,82,.12)]"><Image src={hero.src} alt={hero.alt || frontmatter.title} fill priority className="object-cover" sizes="(max-width: 1024px) 100vw, 1024px" /></div>}
-        {isCourse && value && <div className="mb-8 flex flex-col items-start justify-between gap-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 sm:flex-row sm:items-center"><div className="flex gap-3"><CheckCircle2 className="mt-0.5 h-6 w-6 shrink-0 text-emerald-700" /><div><p className="font-bold text-[#083b59]">{value.value ? `Course value: ${value.value}` : "Practical course value"}</p><p className="text-sm text-slate-600">{value.note}</p></div></div><Link href="/jump-start-plan/" className="inline-flex shrink-0 items-center gap-2 rounded-full bg-emerald-700 px-5 py-3 text-sm font-bold text-white">View packages <ArrowRight className="h-4 w-4" /></Link></div>}
+        {isCourse && value && <div className="mb-8 flex flex-col items-start justify-between gap-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 sm:flex-row sm:items-center"><div className="flex gap-3"><CheckCircle2 className="mt-0.5 h-6 w-6 shrink-0 text-emerald-700" /><div><p className="font-bold text-[#083b59]">Get up to $6,548 in bonus gifts</p><p className="text-sm text-slate-600">{value.note}</p></div></div><Link href="/root-cause-solution/" className="inline-flex shrink-0 items-center gap-2 rounded-full bg-emerald-700 px-5 py-3 text-sm font-bold text-white">View packages <ArrowRight className="h-4 w-4" /></Link></div>}
         <div className="mx-auto max-w-3xl rounded-3xl border border-slate-100 bg-white p-6 shadow-[0_14px_45px_rgba(8,47,82,.06)] sm:p-10"><Prose source={prepared.body} /></div>
       </div>
     </article>
