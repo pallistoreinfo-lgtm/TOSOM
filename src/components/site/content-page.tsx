@@ -43,6 +43,7 @@ export function ContentPage({ frontmatter, body, slug, isCourse = false }: { fro
   const prepared = prepareBody(body, frontmatter.title);
   const hero = frontmatter.heroImage || prepared.image;
   const value = courseValues[slug];
+  const showFullSquareHero = slug === "wealth-without-health-is-worthless";
   return (
     <article className="bg-gradient-to-b from-[#edf9f7] via-white to-white pb-16">
       <header className="border-b border-emerald-100 bg-[radial-gradient(circle_at_top_right,_#d8f5eb,_transparent_42%)]">
@@ -53,7 +54,7 @@ export function ContentPage({ frontmatter, body, slug, isCourse = false }: { fro
         </div>
       </header>
       <div className="container max-w-5xl pt-8 sm:pt-10">
-        {hero && <div className="relative mx-auto mb-8 aspect-[16/9] w-full overflow-hidden rounded-3xl bg-slate-100 shadow-[0_20px_60px_rgba(8,47,82,.12)]"><Image src={hero.src} alt={hero.alt || frontmatter.title} fill priority className="object-cover" sizes="(max-width: 1024px) 100vw, 1024px" /></div>}
+        {hero && <div className={`relative mx-auto mb-8 w-full overflow-hidden rounded-3xl bg-slate-100 shadow-[0_20px_60px_rgba(8,47,82,.12)] ${showFullSquareHero ? "aspect-square max-w-3xl" : "aspect-[16/9]"}`}><Image src={hero.src} alt={hero.alt || frontmatter.title} fill priority className={showFullSquareHero ? "object-contain" : "object-cover"} sizes={showFullSquareHero ? "(max-width: 768px) 100vw, 768px" : "(max-width: 1024px) 100vw, 1024px"} /></div>}
         {isCourse && value && <div className="mb-8 flex flex-col items-start justify-between gap-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 sm:flex-row sm:items-center"><div className="flex gap-3"><CheckCircle2 className="mt-0.5 h-6 w-6 shrink-0 text-emerald-700" /><div><p className="font-bold text-[#083b59]">Get up to $6,548 in bonus gifts</p><p className="text-sm text-slate-600">{value.note}</p></div></div><Link href="/root-cause-solution/" className="inline-flex shrink-0 items-center gap-2 rounded-full bg-emerald-700 px-5 py-3 text-sm font-bold text-white">View packages <ArrowRight className="h-4 w-4" /></Link></div>}
         <div className="mx-auto max-w-3xl rounded-3xl border border-slate-100 bg-white p-6 shadow-[0_14px_45px_rgba(8,47,82,.06)] sm:p-10"><Prose source={prepared.body} /></div>
       </div>
