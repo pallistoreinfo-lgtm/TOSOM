@@ -14,10 +14,25 @@ export const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: site.doctor.name,
-  jobTitle: "Functional Medicine Physician",
-  description: site.doctor.credentials,
+  honorificSuffix: "D.C.",
+  jobTitle: "Chiropractor and Functional Medicine Practitioner",
+  description:
+    "Doctor of Chiropractic, nutrition graduate, author, and host of The Other Side of Medicine; in clinical practice since 1986.",
   url: `${site.url}/about/`,
+  image: `${site.url}/assets/images/2025/04/IMG_2084npic-radio-scaled.jpg`,
   telephone: site.contact.phone,
+  alumniOf: {
+    "@type": "CollegeOrUniversity",
+    name: "Life University",
+  },
+  knowsAbout: ["Chiropractic", "Functional medicine", "Nutrition", "Digestive health", "Gut health"],
+  sameAs: [
+    site.social.facebook,
+    site.social.youtube,
+    site.social.instagram,
+    site.social.x,
+    site.social.linkedin,
+  ],
 };
 
 export function articleSchema(opts: {
@@ -37,7 +52,20 @@ export function articleSchema(opts: {
     datePublished: opts.datePublished,
     dateModified: opts.dateModified ?? opts.datePublished,
     image: opts.image ? new URL(opts.image, site.url).toString() : undefined,
-    author: { "@type": "Person", name: site.doctor.name, url: `${site.url}/about/` },
+    author: {
+      "@type": "Person",
+      name: site.doctor.name,
+      honorificSuffix: "D.C.",
+      jobTitle: "Chiropractor and Functional Medicine Practitioner",
+      url: `${site.url}/about/`,
+      sameAs: [
+        site.social.facebook,
+        site.social.youtube,
+        site.social.instagram,
+        site.social.x,
+        site.social.linkedin,
+      ],
+    },
     publisher: {
       "@type": "Organization",
       name: site.name,

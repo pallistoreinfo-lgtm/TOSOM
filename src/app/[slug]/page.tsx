@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 import { getAllPages, getBlogPosts } from "@/lib/content";
 import { buildMetadata } from "@/lib/seo";
 import { Prose } from "@/components/site/mdx";
@@ -62,12 +64,19 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
   if (found.kind === "post") {
     const post = entry as typeof found.entry & { frontmatter: { date: string; updated?: string; category?: string } };
+    const relatedPosts = getBlogPosts()
+      .filter((candidate) => candidate.slug !== entry.slug && candidate.frontmatter.category === post.frontmatter.category)
+      .slice(0, 3);
+    const publishedDate = new Intl.DateTimeFormat("en-US", { dateStyle: "long" }).format(new Date(post.frontmatter.date));
+    const updatedDate = post.frontmatter.updated
+      ? new Intl.DateTimeFormat("en-US", { dateStyle: "long" }).format(new Date(post.frontmatter.updated))
+      : null;
     return (
       <>
         <JsonLd
           data={articleSchema({
             title: fm.title,
-            description: fm.excerpt,
+            description: fm.seo?.metaDescription ?? fm.excerpt,
             url,
             datePublished: post.frontmatter.date,
             dateModified: post.frontmatter.updated,
@@ -88,9 +97,43 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             </p>
           )}
           <h1 className="mt-1 text-4xl font-bold leading-tight text-secondary">{fm.title}</h1>
-          <p className="mt-3 text-sm text-muted-foreground">By {site.doctor.name}</p>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Written by <Link href="/about/" className="font-medium text-primary hover:underline">{site.doctor.name}</Link>
+            {` · Published ${publishedDate}`}
+            {updatedDate && updatedDate !== publishedDate ? ` · Updated ${updatedDate}` : ""}
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">{site.doctor.credentials} · In practice since {site.doctor.practicingSince}</p>
+          {fm.heroImage && (
+            <div className="relative mt-8 aspect-[16/9] overflow-hidden rounded-2xl bg-surface shadow-sm">
+              <Image
+                src={fm.heroImage.src}
+                alt={fm.heroImage.alt || fm.title}
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 768px"
+              />
+            </div>
+          )}
           <Prose source={entry.body} className="mt-8" />
+          <aside className="mt-10 rounded-xl border border-amber-200 bg-amber-50 p-5 text-sm leading-relaxed text-slate-700">
+            <strong className="text-slate-900">Medical information note:</strong> This article is educational and does not replace a diagnosis or individualized medical care. Symptoms can have more than one cause. Seek urgent care for severe, sudden, or worsening symptoms, and discuss major diet, supplement, medication, or exercise changes with a qualified healthcare professional.
+          </aside>
           <DoctorBio />
+          {relatedPosts.length > 0 && (
+            <section className="mt-12 border-t pt-8" aria-labelledby="related-reading">
+              <h2 id="related-reading" className="text-2xl font-bold text-secondary">Related reading</h2>
+              <ul className="mt-4 space-y-3">
+                {relatedPosts.map((related) => (
+                  <li key={related.slug}>
+                    <Link href={`/${related.slug}/`} className="font-medium text-primary hover:underline">
+                      {related.frontmatter.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
         </article>
       </>
     );
