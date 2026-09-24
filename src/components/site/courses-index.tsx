@@ -9,8 +9,8 @@ const courses = [
   { title: "The 7 Causes of Illness", href: "/the-7-causes-of-illness/", image: "/assets/images/2025/03/5.jpg", value: "$119", description: "Discover overlooked root causes of chronic symptoms and practical ways to support natural healing." },
   { title: "Stool Transit Time", href: "/stool-transit-time-course/", image: "/assets/images/2025/03/4.jpg", value: "$139", description: "Use a simple at-home measurement to understand digestive speed, absorption, and bowel function." },
   { title: "Supernatural Morning", href: "/supernatural-morning/", image: "/assets/images/2025/03/7.jpg", value: "$199", description: "Build a purposeful morning routine for mindset, movement, nourishment, energy, and resilience." },
-  { title: "Blue Zone Diet", href: "/blue-zone-diet-course/", image: "/assets/images/2025/03/2-3.jpg", description: "Apply the food and lifestyle patterns shared by some of the world’s longest-living populations." },
-  { title: "7-Day Poop Challenge", href: "/7-day-poop-challenge/", image: "/assets/images/2025/04/Green-Minimalist-Lets-Eat-Healthy-Food-Instagram-Post-1.jpg", description: "Track and understand what daily bowel habits reveal about your gut and overall health." },
+  { title: "Blue Zone Diet", href: "/blue-zone-diet-course/", image: "/assets/images/2025/03/2-3.jpg", value: "$149", description: "Apply the food and lifestyle patterns shared by some of the world’s longest-living populations." },
+  { title: "7-Day Poop Challenge", href: "/7-day-poop-challenge/", image: "/assets/images/2025/04/Green-Minimalist-Lets-Eat-Healthy-Food-Instagram-Post-1.jpg", value: "$189", description: "Track and understand what daily bowel habits reveal about your gut and overall health." },
 ];
 
 export function CoursesIndex() {
