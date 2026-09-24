@@ -5,7 +5,6 @@ import Link from "next/link";
 import { getAllPages, getBlogPosts } from "@/lib/content";
 import { buildMetadata } from "@/lib/seo";
 import { Prose } from "@/components/site/mdx";
-import { ConsultationCTA } from "@/components/site/sections";
 import { DoctorBio } from "@/components/site/doctor-bio";
 import { ConsultationPage } from "@/components/site/consultation-page";
 import { JsonLd, breadcrumbSchema, personSchema, articleSchema } from "@/components/site/json-ld";
@@ -13,6 +12,7 @@ import { site } from "@/config/site";
 import { ContentPage } from "@/components/site/content-page";
 import { CoursesIndex } from "@/components/site/courses-index";
 import { PackagePage } from "@/components/site/package-page";
+import { ExpertInfoPage } from "@/components/site/expert-info-page";
 import { findPublishedEntry } from "@/lib/runtime-content";
 import type { BlogFrontmatter, PageFrontmatter } from "@/lib/schemas";
 import type { ContentEntry } from "@/lib/content";
@@ -159,7 +159,21 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
   // Page / condition / lab test
   const pageFrontmatter = fm as PageFrontmatter;
-  const showCta = pageFrontmatter.type === "condition" || pageFrontmatter.type === "labtest";
+  const isExpertInfo = pageFrontmatter.type === "condition" || pageFrontmatter.type === "labtest";
+  if (isExpertInfo) {
+    return (
+      <>
+        <JsonLd data={personSchema} />
+        <JsonLd
+          data={breadcrumbSchema([
+            { name: "Home", url: `${site.url}/` },
+            { name: pageFrontmatter.title, url },
+          ])}
+        />
+        <ExpertInfoPage frontmatter={pageFrontmatter} body={entry.body} slug={entry.slug} />
+      </>
+    );
+  }
   const courseSlugs = new Set(["7-day-poop-challenge", "blue-zone-diet-course", "carbs-from-heaven-carbs-from-hell", "stool-transit-time-course", "supernatural-morning", "the-7-causes-of-illness", "gut-community", "dr-krystosiks-90-days-gut-health-program"]);
   return (
     <>
@@ -171,7 +185,6 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         ])}
       />
       <ContentPage frontmatter={pageFrontmatter} body={entry.body} slug={entry.slug} isCourse={courseSlugs.has(entry.slug)} />
-      {showCta && <ConsultationCTA />}
     </>
   );
 }

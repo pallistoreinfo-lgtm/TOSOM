@@ -22,8 +22,7 @@
         { "label": "Comprehensive Stool Analysis Test", "href": "/comprehensive-stool-analysis-test/" },
         { "label": "Elephant in the Exam Room", "href": "/comprehensive-stool-analysis-test-2/" },
         { "label": "Micronutrient Test", "href": "/micronutrient-test/" }
-      ] },
-      { "label": "Contact", "href": "/contact/" }
+      ] }
     ] },
     { "label": "Gut Restoration", "children": [
       { "label": "Jump Start Plan", "href": "/jump-start-plan/" },
@@ -42,7 +41,8 @@
     ] },
     { "label": "Articles", "href": "/articles/" },
     { "label": "Testimonies", "children": [{ "label": "Videos", "href": "/videos/" }, { "label": "Audio", "href": "/audio/" }] },
-    { "label": "Podcast", "href": "/podcasts/" }
+    { "label": "Podcast", "href": "/podcasts/" },
+    { "label": "Contact", "href": "/contact/" }
   ],
   "headerActions": {
     "quiz": { "label": "Take Gut Quiz", "href": "https://form.jotform.com/250364347478464" },
