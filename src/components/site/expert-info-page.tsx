@@ -4,8 +4,6 @@ import {
   Apple,
   ArrowRight,
   Beaker,
-  CircleCheck,
-  Dna,
   Microscope,
   Scale,
   ShieldCheck,
@@ -92,48 +90,6 @@ const profiles: Record<string, ExpertProfile> = {
   },
 };
 
-const conditionLinks = [
-  ["Digestive Illness", "/digestive-illness/"],
-  ["Autoimmune Disease", "/autoimmune-disease/"],
-  ["Metabolic Disorder", "/metabolic-disorder/"],
-  ["SIBO", "/sibo-specialist/"],
-  ["Weight Loss", "/weight-loss/"],
-];
-
-const testLinks = [
-  ["Comprehensive Stool Analysis", "/comprehensive-stool-analysis-test/"],
-  ["Food Reaction Evaluation", "/comprehensive-stool-analysis-test-2/"],
-  ["Micronutrient Assessment", "/micronutrient-test/"],
-];
-
-function ExploreLinks({ current }: { current: string }) {
-  const list = (title: string, links: string[][]) => (
-    <div>
-      <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">{title}</p>
-      <ul className="mt-3 space-y-1">
-        {links.map(([label, href]) => {
-          const active = href === `/${current}/`;
-          return (
-            <li key={href}>
-              <Link href={href} aria-current={active ? "page" : undefined} className={`flex items-center justify-between rounded-xl px-3 py-2.5 text-sm transition ${active ? "bg-[#e6f5ef] font-semibold text-[#087c58]" : "text-slate-600 hover:bg-slate-50 hover:text-[#087c58]"}`}>
-                {label}{active && <CircleCheck className="h-4 w-4" />}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
-
-  return (
-    <aside className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm lg:sticky lg:top-6">
-      <div className="flex items-center gap-2 text-[#0b355d]"><Dna className="h-5 w-5 text-[#07835e]" /><h2 className="font-bold">Explore Expert Info</h2></div>
-      <div className="mt-6 space-y-7">{list("Health concerns", conditionLinks)}{list("Clinical assessments", testLinks)}</div>
-      <Link href="/contact/" className="mt-6 flex items-center justify-between border-t border-slate-100 pt-5 text-sm font-semibold text-[#07528c] hover:text-[#07835e]">Contact the practice <ArrowRight className="h-4 w-4" /></Link>
-    </aside>
-  );
-}
-
 export function ExpertInfoPage({ frontmatter, body, slug }: { frontmatter: PageFrontmatter; body: string; slug: string }) {
   const profile = profiles[slug];
   if (!profile) return <Prose source={body} />;
@@ -162,24 +118,21 @@ export function ExpertInfoPage({ frontmatter, body, slug }: { frontmatter: PageF
         </div>
       </section>
 
-      <section id="learn" className="container py-14 lg:py-20">
-        <div className="grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)]">
-          <ExploreLinks current={slug} />
-          <div className="min-w-0">
-            <div className="grid gap-4 sm:grid-cols-3">
+      <section id="learn" className="container max-w-5xl py-8 sm:py-12 lg:py-14">
+          <div className="flex min-w-0 flex-col">
+            <div className="order-2 mt-6 grid gap-4 sm:order-1 sm:mt-0 sm:grid-cols-3">
               {profile.focus.map((item, index) => <div key={item} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><span className={`inline-flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold ${profile.soft}`}>{index + 1}</span><p className="mt-4 font-semibold leading-6 text-[#0b355d]">{item}</p></div>)}
             </div>
-            <article className="mt-6 rounded-3xl border border-slate-200 bg-white px-6 py-8 shadow-sm sm:px-10 sm:py-10">
+            <article className="order-1 rounded-3xl border border-slate-200 bg-white px-6 py-8 shadow-sm sm:order-2 sm:mt-6 sm:px-10 sm:py-10">
               <Prose source={body} className="[&_h2]:scroll-mt-24 [&_h2]:border-t [&_h2]:border-slate-100 [&_h2]:pt-9 [&_h2:first-child]:mt-0 [&_h2:first-child]:border-0 [&_h2:first-child]:pt-0 [&_h3]:text-lg [&_li]:pl-1" />
             </article>
-            <div className={`mt-6 rounded-2xl border border-current/10 p-5 text-sm leading-7 ${profile.soft}`}><strong>My clinical perspective:</strong> {profile.note}</div>
-            <div className="mt-8 rounded-3xl bg-[#082a55] px-7 py-8 text-white sm:flex sm:items-center sm:justify-between sm:gap-8 sm:px-9">
+            <div className={`order-3 mt-6 rounded-2xl border border-current/10 p-5 text-sm leading-7 ${profile.soft}`}><strong>My clinical perspective:</strong> {profile.note}</div>
+            <div className="order-4 mt-8 rounded-3xl bg-[#082a55] px-7 py-8 text-white sm:flex sm:items-center sm:justify-between sm:gap-8 sm:px-9">
               <div><p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-300">A thoughtful first step</p><h2 className="mt-2 text-2xl font-bold">Let’s review your full health story.</h2><p className="mt-2 max-w-xl text-sm leading-6 text-white/75">A consultation helps determine what deserves attention, what testing may be useful, and what can safely wait.</p></div>
               <Link href="/consultation-with-dr-krystosik/" className="mt-5 inline-flex shrink-0 items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold text-[#082a55] transition hover:bg-emerald-50 sm:mt-0">Book a consultation <ArrowRight className="h-4 w-4" /></Link>
             </div>
-            <p className="mt-6 text-xs leading-5 text-slate-500">This page is educational and does not replace diagnosis or individualized medical care. Seek urgent medical attention for severe, sudden, or rapidly worsening symptoms.</p>
+            <p className="order-5 mt-6 text-xs leading-5 text-slate-500">This page is educational and does not replace diagnosis or individualized medical care. Seek urgent medical attention for severe, sudden, or rapidly worsening symptoms.</p>
           </div>
-        </div>
       </section>
     </main>
   );
