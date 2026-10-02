@@ -142,12 +142,12 @@ export default async function PodcastsPage() {
             </div>
             <span className="hidden text-sm font-semibold text-slate-500 sm:block">New perspectives. Practical next steps.</span>
           </div>
-          <article className="grid overflow-hidden rounded-[2rem] bg-[#082f54] text-white shadow-[0_25px_70px_rgba(8,47,84,.18)] lg:grid-cols-[.78fr_1.22fr]">
-            <div className="relative flex min-h-[330px] items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_35%_25%,#2aa879_0%,#087260_35%,#052d4c_78%)] p-10">
+          <article className="grid overflow-hidden rounded-[2rem] bg-[#082f54] text-white shadow-[0_25px_70px_rgba(8,47,84,.18)] lg:grid-cols-[minmax(300px,420px)_1fr]">
+            <div className="relative flex aspect-[2/3] w-full max-w-[420px] items-center justify-center justify-self-center overflow-hidden bg-[radial-gradient(circle_at_35%_25%,#2aa879_0%,#087260_35%,#052d4c_78%)] p-10">
               <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(255,255,255,.25)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.25)_1px,transparent_1px)] [background-size:36px_36px]" />
               {latestEpisode.image ? (
                 <>
-                  <Image src={latestEpisode.image} alt={`Artwork for ${latestEpisode.title}`} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 40vw" />
+                  <Image src={latestEpisode.image} alt={`Artwork for ${latestEpisode.title}`} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 420px" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#052d4c]/75 via-transparent to-transparent" />
                   <span className="relative mt-auto flex h-20 w-20 items-center justify-center rounded-full border border-white/40 bg-white/20 shadow-2xl backdrop-blur"><Play className="ml-1 h-8 w-8 fill-white" /></span>
                 </>
@@ -187,7 +187,7 @@ export default async function PodcastsPage() {
               const episodeNumber = ep.episodeNumber || String(Math.max(1, episodes.length - index - 1));
               return (
                 <article key={ep.slug} className="group relative flex min-h-[420px] flex-col overflow-hidden rounded-3xl border border-slate-200 bg-[#fbfdfc] transition duration-300 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-[0_18px_50px_rgba(8,47,84,.1)]">
-                  <div className="relative aspect-[16/9] overflow-hidden bg-[linear-gradient(135deg,#0a405b,#0a8b6d)]">
+                  <div className="relative aspect-[2/3] overflow-hidden bg-[linear-gradient(135deg,#0a405b,#0a8b6d)]">
                     {ep.image && <Image src={ep.image} alt={`Artwork for ${ep.title}`} fill className="object-cover transition duration-500 group-hover:scale-105" sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw" />}
                     <span className="absolute left-4 top-4 inline-flex h-11 min-w-11 items-center justify-center rounded-xl bg-white/95 px-3 text-sm font-black text-emerald-800 shadow-lg">{String(episodeNumber).padStart(2, "0")}</span>
                   </div>

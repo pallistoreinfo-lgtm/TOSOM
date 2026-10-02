@@ -104,8 +104,8 @@ export default async function EpisodePage({ params }: { params: Promise<{ episod
         <div className="bg-[linear-gradient(135deg,#062f4f,#087a63)] py-12 text-white sm:py-16">
           <div className="container max-w-6xl">
             <Link href="/podcasts/" className="inline-flex items-center gap-2 text-sm font-bold text-emerald-100 hover:text-white"><ArrowLeft className="h-4 w-4" /> All episodes</Link>
-            <div className="mt-8 grid items-center gap-9 lg:grid-cols-[.8fr_1.2fr]">
-              <div className="relative aspect-square overflow-hidden rounded-3xl bg-white/10 shadow-2xl">
+            <div className="mt-8 grid items-center gap-9 lg:grid-cols-[minmax(300px,420px)_1fr]">
+              <div className="relative aspect-[2/3] w-full max-w-[420px] justify-self-center overflow-hidden rounded-3xl bg-white/10 shadow-2xl">
                 {fm.episodeImage?.src ? (
                   <Image src={fm.episodeImage.src} alt={fm.episodeImage.alt || `Artwork for ${fm.title}`} fill priority className="object-cover" sizes="(max-width: 1024px) 90vw, 440px" />
                 ) : (
