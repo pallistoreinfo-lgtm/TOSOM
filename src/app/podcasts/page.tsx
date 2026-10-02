@@ -5,6 +5,7 @@ import { ArrowRight, Clock3, Headphones, Mic2, Play, Radio, Rss } from "lucide-r
 import { getPodcastEpisodes } from "@/lib/content";
 import { site } from "@/config/site";
 import { applyPublishedCollection } from "@/lib/runtime-content";
+import { getLibsynFeed } from "@/lib/libsyn-feed";
 
 export const dynamic = "force-dynamic";
 
@@ -25,9 +26,48 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://theothersideofmedicine.com/podcasts/" },
 };
 
+type PodcastCardEpisode = {
+  audioUrl: string;
+  date: string;
+  duration?: string;
+  episodeNumber?: string;
+  excerpt: string;
+  external: boolean;
+  href: string;
+  image?: string;
+  slug: string;
+  title: string;
+};
+
 export default async function PodcastsPage() {
-  const episodes = (await applyPublishedCollection("podcast", getPodcastEpisodes()))
+  const localEntries = (await applyPublishedCollection("podcast", getPodcastEpisodes()))
     .sort((a, b) => Date.parse(b.frontmatter.date) - Date.parse(a.frontmatter.date));
+  const libsynFeed = await getLibsynFeed();
+  const libsynEpisodes: PodcastCardEpisode[] = (libsynFeed?.episodes ?? []).map((episode) => ({
+    audioUrl: episode.audioUrl,
+    date: episode.date,
+    duration: episode.duration,
+    episodeNumber: episode.episodeNumber,
+    excerpt: episode.description,
+    external: true,
+    href: episode.link,
+    image: episode.image,
+    slug: episode.slug,
+    title: episode.title,
+  }));
+  const localEpisodes: PodcastCardEpisode[] = localEntries.map((entry, index) => ({
+    audioUrl: entry.frontmatter.audioUrl,
+    date: entry.frontmatter.date,
+    duration: entry.frontmatter.duration,
+    episodeNumber: String(localEntries.length - index),
+    excerpt: entry.frontmatter.excerpt,
+    external: false,
+    href: `/podcasts/${entry.slug}/`,
+    image: entry.frontmatter.episodeImage?.src,
+    slug: entry.slug,
+    title: entry.frontmatter.title,
+  }));
+  const episodes = libsynEpisodes.length ? libsynEpisodes : localEpisodes;
   const [latestEpisode, ...archive] = episodes;
   const platforms = [
     { label: "Podcast RSS", href: site.integrations.podcastRssUrl, icon: Rss },
@@ -64,7 +104,7 @@ export default async function PodcastsPage() {
             <div className="absolute -inset-5 rotate-3 rounded-[2.5rem] border border-white/20 bg-white/10" />
             <div className="relative aspect-square overflow-hidden rounded-[2rem] border border-white/20 bg-[#dff4ec] shadow-2xl">
               <Image
-                src="/assets/images/2025/03/podcast_thumb_new-20231110-ltxhu6bn14.jpg"
+                src={libsynFeed?.image || "/assets/images/2025/03/podcast_thumb_new-20231110-ltxhu6bn14.jpg"}
                 alt="The Other Side of Medicine podcast with Dr. James Krystosik"
                 fill
                 priority
@@ -105,22 +145,30 @@ export default async function PodcastsPage() {
           <article className="grid overflow-hidden rounded-[2rem] bg-[#082f54] text-white shadow-[0_25px_70px_rgba(8,47,84,.18)] lg:grid-cols-[.78fr_1.22fr]">
             <div className="relative flex min-h-[330px] items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_35%_25%,#2aa879_0%,#087260_35%,#052d4c_78%)] p-10">
               <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(255,255,255,.25)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.25)_1px,transparent_1px)] [background-size:36px_36px]" />
-              <div className="relative text-center">
-                <span className="mx-auto flex h-24 w-24 items-center justify-center rounded-full border border-white/30 bg-white/15 shadow-2xl backdrop-blur"><Play className="ml-1 h-10 w-10 fill-white" /></span>
-                <p className="mt-7 text-xs font-black uppercase tracking-[0.28em] text-emerald-100">Episode {String(episodes.length).padStart(2, "0")}</p>
-                <p className="mt-2 text-xl font-bold">The Other Side of Medicine</p>
-              </div>
+              {latestEpisode.image ? (
+                <>
+                  <Image src={latestEpisode.image} alt={`Artwork for ${latestEpisode.title}`} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 40vw" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#052d4c]/75 via-transparent to-transparent" />
+                  <span className="relative mt-auto flex h-20 w-20 items-center justify-center rounded-full border border-white/40 bg-white/20 shadow-2xl backdrop-blur"><Play className="ml-1 h-8 w-8 fill-white" /></span>
+                </>
+              ) : (
+                <div className="relative text-center">
+                  <span className="mx-auto flex h-24 w-24 items-center justify-center rounded-full border border-white/30 bg-white/15 shadow-2xl backdrop-blur"><Play className="ml-1 h-10 w-10 fill-white" /></span>
+                  <p className="mt-7 text-xs font-black uppercase tracking-[0.28em] text-emerald-100">Episode {latestEpisode.episodeNumber || String(episodes.length).padStart(2, "0")}</p>
+                  <p className="mt-2 text-xl font-bold">The Other Side of Medicine</p>
+                </div>
+              )}
             </div>
             <div className="flex flex-col justify-center p-8 sm:p-11 lg:p-14">
-              <time dateTime={latestEpisode.frontmatter.date} className="text-xs font-bold uppercase tracking-[0.18em] text-[#8ee5be]">{formatEpisodeDate(latestEpisode.frontmatter.date)}</time>
-              <h2 className="mt-4 text-3xl font-black leading-tight tracking-tight sm:text-4xl">{latestEpisode.frontmatter.title}</h2>
-              {latestEpisode.frontmatter.excerpt && <p className="mt-5 line-clamp-3 text-base leading-7 text-slate-200">{latestEpisode.frontmatter.excerpt}</p>}
-              {latestEpisode.frontmatter.audioUrl && (
-                <audio controls preload="none" className="mt-7 w-full" src={latestEpisode.frontmatter.audioUrl}>Your browser does not support audio playback.</audio>
+              <time dateTime={latestEpisode.date} className="text-xs font-bold uppercase tracking-[0.18em] text-[#8ee5be]">{formatEpisodeDate(latestEpisode.date)}</time>
+              <h2 className="mt-4 text-3xl font-black leading-tight tracking-tight sm:text-4xl">{latestEpisode.title}</h2>
+              {latestEpisode.excerpt && <p className="mt-5 line-clamp-3 text-base leading-7 text-slate-200">{latestEpisode.excerpt}</p>}
+              {latestEpisode.audioUrl && (
+                <audio controls preload="none" className="mt-7 w-full" src={latestEpisode.audioUrl}>Your browser does not support audio playback.</audio>
               )}
-              <Link href={`/podcasts/${latestEpisode.slug}/`} className="mt-7 inline-flex items-center gap-2 self-start text-sm font-black text-[#8ee5be] hover:text-white">
-                Episode notes <ArrowRight className="h-4 w-4" />
-              </Link>
+              <a href={latestEpisode.href} target={latestEpisode.external ? "_blank" : undefined} rel={latestEpisode.external ? "noopener" : undefined} className="mt-7 inline-flex items-center gap-2 self-start text-sm font-black text-[#8ee5be] hover:text-white">
+                {latestEpisode.external ? "View on Libsyn" : "Episode notes"} <ArrowRight className="h-4 w-4" />
+              </a>
             </div>
           </article>
         </section>
@@ -136,20 +184,23 @@ export default async function PodcastsPage() {
 
           <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {archive.map((ep, index) => {
-              const episodeNumber = Math.max(1, episodes.length - index - 1);
+              const episodeNumber = ep.episodeNumber || String(Math.max(1, episodes.length - index - 1));
               return (
-                <article key={ep.slug} className="group relative flex min-h-[305px] flex-col rounded-3xl border border-slate-200 bg-[#fbfdfc] p-6 transition duration-300 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-[0_18px_50px_rgba(8,47,84,.1)]">
-                  <div className="flex items-center justify-between gap-4">
-                    <span className="inline-flex h-11 min-w-11 items-center justify-center rounded-xl bg-emerald-100 px-3 text-sm font-black text-emerald-800">{String(episodeNumber).padStart(2, "0")}</span>
-                    <time dateTime={ep.frontmatter.date} className="text-xs font-bold uppercase tracking-wider text-slate-500">{formatEpisodeDate(ep.frontmatter.date)}</time>
+                <article key={ep.slug} className="group relative flex min-h-[420px] flex-col overflow-hidden rounded-3xl border border-slate-200 bg-[#fbfdfc] transition duration-300 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-[0_18px_50px_rgba(8,47,84,.1)]">
+                  <div className="relative aspect-[16/9] overflow-hidden bg-[linear-gradient(135deg,#0a405b,#0a8b6d)]">
+                    {ep.image && <Image src={ep.image} alt={`Artwork for ${ep.title}`} fill className="object-cover transition duration-500 group-hover:scale-105" sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw" />}
+                    <span className="absolute left-4 top-4 inline-flex h-11 min-w-11 items-center justify-center rounded-xl bg-white/95 px-3 text-sm font-black text-emerald-800 shadow-lg">{String(episodeNumber).padStart(2, "0")}</span>
                   </div>
-                  <h3 className="mt-6 line-clamp-3 text-xl font-black leading-snug text-[#0a3858] group-hover:text-emerald-700">{ep.frontmatter.title}</h3>
-                  {ep.frontmatter.excerpt && <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">{ep.frontmatter.excerpt}</p>}
-                  <div className="mt-auto flex items-center justify-between gap-4 pt-6">
-                    <Link href={`/podcasts/${ep.slug}/`} className="inline-flex items-center gap-2 text-sm font-black text-emerald-700 before:absolute before:inset-0">
+                  <div className="flex flex-1 flex-col p-6">
+                    <time dateTime={ep.date} className="text-xs font-bold uppercase tracking-wider text-slate-500">{formatEpisodeDate(ep.date)}</time>
+                    <h3 className="mt-3 line-clamp-3 text-xl font-black leading-snug text-[#0a3858] group-hover:text-emerald-700">{ep.title}</h3>
+                    {ep.excerpt && <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">{ep.excerpt}</p>}
+                    <div className="mt-auto flex items-center justify-between gap-4 pt-6">
+                    <a href={ep.href} target={ep.external ? "_blank" : undefined} rel={ep.external ? "noopener" : undefined} className="inline-flex items-center gap-2 text-sm font-black text-emerald-700 before:absolute before:inset-0">
                       Listen now <Play className="h-3.5 w-3.5 fill-current" />
-                    </Link>
-                    {ep.frontmatter.duration && <span className="inline-flex items-center gap-1 text-xs text-slate-500"><Clock3 className="h-3.5 w-3.5" /> {ep.frontmatter.duration}</span>}
+                    </a>
+                    {ep.duration && <span className="inline-flex items-center gap-1 text-xs text-slate-500"><Clock3 className="h-3.5 w-3.5" /> {ep.duration}</span>}
+                    </div>
                   </div>
                 </article>
               );

@@ -8,6 +8,7 @@ const nextConfig = {
   images: {
     // Source images are already optimized by the migration tooling.
     unoptimized: true,
+    remotePatterns: [{ protocol: "https", hostname: "static.libsyn.com" }],
   },
   pageExtensions: ["ts", "tsx", "mdx"],
   // Repo is self-contained; pin the tracing root to silence the multi-lockfile warning.
