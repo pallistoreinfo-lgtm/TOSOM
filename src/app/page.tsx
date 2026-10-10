@@ -32,17 +32,18 @@ export default async function HomePage() {
   return (
     <div className="overflow-hidden bg-white text-[#082a55]">
       <section className="relative overflow-hidden bg-[#f8f4ed]">
-        <Image src="/assets/home/gut-restoration-roadmap.webp" alt="Dr. James Krystosik at age 77 presenting his gut restoration roadmap" width={2600} height={1387} priority sizes="100vw" className="h-auto w-full" />
-
-        <div className="home-container py-9 text-center sm:py-11 lg:py-14">
-          <div className="mx-auto max-w-[900px]">
-            <p className="mb-4 text-[12px] font-bold uppercase tracking-[0.23em] text-[#118860]">{content.hero.eyebrow}</p>
-            <h1 className="text-[37px] font-extrabold leading-[1.1] tracking-[-0.035em] text-[#082a55] sm:text-[44px] lg:text-[50px]">
+        <div className="home-container pb-9 pt-7 text-center sm:pb-11 sm:pt-9 lg:pb-14 lg:pt-10">
+          <div className="mx-auto">
+            <h1 className="text-[34px] font-extrabold leading-[1.08] tracking-[-0.04em] text-[#082a55] sm:text-[43px] lg:text-[50px] xl:whitespace-nowrap xl:text-[56px]">
               {content.hero.line1} <span className="text-[#129562]">{content.hero.line2} {content.hero.line3}</span>
             </h1>
-            <p className="mx-auto mt-5 max-w-[650px] text-[16px] leading-7 text-[#123b67]">{content.hero.description}</p>
-            <Link href="/wealth-without-health-is-worthless/" className="mt-3 inline-flex items-center gap-2 text-[15px] font-bold text-[#087c58] underline decoration-2 underline-offset-4 hover:text-[#07528c]">{content.hero.findOutWhy} <ArrowRight className="h-4 w-4" /></Link>
-            <div className="mt-6 flex flex-wrap justify-center gap-4">
+
+            <div className="mt-6 overflow-hidden rounded-[18px] bg-white shadow-[0_18px_45px_rgba(8,42,85,0.1)] sm:mt-8 sm:rounded-[28px]">
+              <Image src="/assets/home/gut-restoration-roadmap.webp" alt="Dr. James Krystosik at age 77 presenting his gut restoration roadmap" width={2600} height={1387} priority sizes="(max-width: 1362px) calc(100vw - 2rem), 1330px" className="h-auto w-full" />
+            </div>
+
+            <Link href="/wealth-without-health-is-worthless/" className="mt-6 inline-flex items-center gap-2 text-[15px] font-bold text-[#087c58] underline decoration-2 underline-offset-4 hover:text-[#07528c]">{content.hero.findOutWhy} <ArrowRight className="h-4 w-4" /></Link>
+            <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
               <GreenButton href={headerActions.quiz.href}>{content.hero.primaryButton}</GreenButton>
               <a href={runtimeSettings.site.social.youtube} target="_blank" rel="noopener noreferrer" className="home-outline-button"><span className="flex h-5 w-5 items-center justify-center rounded-full border border-current"><Play className="ml-0.5 h-2.5 w-2.5 fill-current" /></span>{content.hero.secondaryButton}</a>
             </div>
