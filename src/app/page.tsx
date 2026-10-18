@@ -44,7 +44,7 @@ export default async function HomePage() {
               <Image src="/assets/home/wealth-without-health-hero.png" alt="A woman reflecting on health, aging, and the life she wants in 30 years" width={1254} height={1254} priority sizes="(max-width: 932px) calc(100vw - 2rem), 900px" className="h-auto w-full" />
             </div>
 
-            <Link href="/wealth-without-health-is-worthless/" className="mt-6 inline-flex items-center gap-2 text-[15.9px] font-bold text-[#087c58] underline decoration-2 underline-offset-4 hover:text-[#07528c]">{content.hero.findOutWhy} <ArrowRight className="h-[17px] w-[17px]" /></Link>
+            <Link href="/wealth-without-health-is-worthless/" className="mt-6 inline-flex items-center gap-2 text-[19px] font-bold text-[#087c58] underline decoration-2 underline-offset-4 hover:text-[#07528c]">{content.hero.findOutWhy} <ArrowRight className="h-[20px] w-[20px]" /></Link>
             <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
               <GreenButton href={headerActions.quiz.href}>{content.hero.primaryButton}</GreenButton>
               <a href={runtimeSettings.site.social.youtube} target="_blank" rel="noopener noreferrer" className="home-outline-button"><span className="flex h-5 w-5 items-center justify-center rounded-full border border-current"><Play className="ml-0.5 h-2.5 w-2.5 fill-current" /></span>{content.hero.secondaryButton}</a>
