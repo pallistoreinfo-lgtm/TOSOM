@@ -36,7 +36,7 @@ export default async function HomePage() {
 
         <div className="home-container pb-9 pt-7 text-center sm:pb-11 sm:pt-9 lg:pb-14 lg:pt-10">
           <div className="mx-auto">
-            <h1 className="text-[34px] font-extrabold leading-[1.08] tracking-[-0.04em] text-[#082a55] sm:text-[43px] lg:text-[50px] xl:whitespace-nowrap xl:text-[56px]">
+            <h1 className="whitespace-nowrap text-[clamp(14px,4.5vw,56px)] font-extrabold leading-[1.08] tracking-[-0.04em] text-[#082a55]">
               {content.hero.line1} <span className="text-[#129562]">{content.hero.line2} {content.hero.line3}</span>
             </h1>
 
