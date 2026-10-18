@@ -38,8 +38,8 @@ export default async function HomePage() {
               {content.hero.line1} <span className="text-[#129562]">{content.hero.line2} {content.hero.line3}</span>
             </h1>
 
-            <div className="mt-6 overflow-hidden rounded-[18px] bg-white shadow-[0_18px_45px_rgba(8,42,85,0.1)] sm:mt-8 sm:rounded-[28px]">
-              <Image src="/assets/home/gut-restoration-roadmap.webp" alt="Dr. James Krystosik at age 77 presenting his gut restoration roadmap" width={2600} height={1387} priority sizes="(max-width: 1362px) calc(100vw - 2rem), 1330px" className="h-auto w-full" />
+            <div className="mx-auto mt-6 max-w-[900px] overflow-hidden rounded-[18px] bg-[#151515] shadow-[0_18px_45px_rgba(8,42,85,0.14)] sm:mt-8 sm:rounded-[28px]">
+              <Image src="/assets/home/wealth-without-health-hero.png" alt="A woman reflecting on health, aging, and the life she wants in 30 years" width={1254} height={1254} priority sizes="(max-width: 932px) calc(100vw - 2rem), 900px" className="h-auto w-full" />
             </div>
 
             <Link href="/wealth-without-health-is-worthless/" className="mt-6 inline-flex items-center gap-2 text-[15px] font-bold text-[#087c58] underline decoration-2 underline-offset-4 hover:text-[#07528c]">{content.hero.findOutWhy} <ArrowRight className="h-4 w-4" /></Link>
