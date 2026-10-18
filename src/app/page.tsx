@@ -32,6 +32,8 @@ export default async function HomePage() {
   return (
     <div className="overflow-hidden bg-white text-[#082a55]">
       <section className="relative overflow-hidden bg-[#f8f4ed]">
+        <Image src="/assets/home/gut-restoration-roadmap.webp" alt="Dr. James Krystosik at age 77 presenting his gut restoration roadmap" width={2600} height={1387} priority sizes="100vw" className="h-auto w-full" />
+
         <div className="home-container pb-9 pt-7 text-center sm:pb-11 sm:pt-9 lg:pb-14 lg:pt-10">
           <div className="mx-auto">
             <h1 className="text-[34px] font-extrabold leading-[1.08] tracking-[-0.04em] text-[#082a55] sm:text-[43px] lg:text-[50px] xl:whitespace-nowrap xl:text-[56px]">
