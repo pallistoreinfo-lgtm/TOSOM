@@ -34,13 +34,13 @@ export default async function HomePage() {
       <section className="relative overflow-hidden bg-[#f8f4ed]">
         <Image src="/assets/home/gut-restoration-roadmap.webp" alt="Dr. James Krystosik at age 77 presenting his gut restoration roadmap" width={2600} height={1387} priority sizes="100vw" className="h-auto w-full" />
 
-        <div className="home-container pb-7 pt-3 text-center sm:pb-9 sm:pt-5 lg:pb-12 lg:pt-6">
+        <div className="home-container pb-9 pt-7 text-center sm:pb-11 sm:pt-9 lg:pb-14 lg:pt-10">
           <div className="mx-auto">
             <h1 className="origin-center scale-x-[0.88] whitespace-nowrap text-[clamp(18px,5vw,64px)] font-black leading-none tracking-[-0.055em] text-[#082a55]">
               {content.hero.line1} <span className="text-[#129562]">{content.hero.line2} {content.hero.line3}</span>
             </h1>
 
-            <div className="mx-auto mt-3 max-w-[900px] overflow-hidden rounded-[18px] bg-[#151515] shadow-[0_18px_45px_rgba(8,42,85,0.14)] sm:mt-4 sm:rounded-[28px]">
+            <div className="mx-auto mt-6 max-w-[900px] overflow-hidden rounded-[18px] bg-[#151515] shadow-[0_18px_45px_rgba(8,42,85,0.14)] sm:mt-8 sm:rounded-[28px]">
               <Image src="/assets/home/wealth-without-health-hero.png" alt="A woman reflecting on health, aging, and the life she wants in 30 years" width={1254} height={1254} priority sizes="(max-width: 932px) calc(100vw - 2rem), 900px" className="h-auto w-full" />
             </div>
 
