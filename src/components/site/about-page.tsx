@@ -45,7 +45,7 @@ export function AboutPage() {
           <div>
             <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-700">Meet Dr. J</p>
             <h1 className="mt-4 text-4xl font-black leading-[1.05] tracking-[-0.04em] text-[#082f52] sm:text-5xl lg:text-6xl">
-              James D. Krystosik, D.C.
+              Dr. James Krystosik
             </h1>
             <p className="mt-5 text-lg font-bold leading-7 text-emerald-700 sm:text-xl">
               Chiropractor · Functional Medicine Practitioner · Author · Podcast Host
@@ -76,7 +76,7 @@ export function AboutPage() {
             <div className="relative aspect-[3/4] overflow-hidden rounded-[2rem] border-8 border-white bg-emerald-50 shadow-[0_28px_70px_rgba(8,47,82,.2)]">
               <Image
                 src="/assets/images/2025/04/IMG_2084npic-radio-scaled.jpg"
-                alt="Dr. James D. Krystosik outdoors"
+                alt="Dr. James Krystosik outdoors"
                 fill
                 priority
                 className="object-cover object-center"
