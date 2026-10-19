@@ -13,6 +13,7 @@ import { ContentPage } from "@/components/site/content-page";
 import { CoursesIndex } from "@/components/site/courses-index";
 import { PackagePage } from "@/components/site/package-page";
 import { ExpertInfoPage } from "@/components/site/expert-info-page";
+import { AboutPage } from "@/components/site/about-page";
 import { findPublishedEntry } from "@/lib/runtime-content";
 import type { BlogFrontmatter, PageFrontmatter } from "@/lib/schemas";
 import type { ContentEntry } from "@/lib/content";
@@ -155,6 +156,20 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   }
 
   if (entry.slug === "courses") return <CoursesIndex />;
+  if (entry.slug === "about") {
+    return (
+      <>
+        <JsonLd data={personSchema} />
+        <JsonLd
+          data={breadcrumbSchema([
+            { name: "Home", url: `${site.url}/` },
+            { name: "About", url },
+          ])}
+        />
+        <AboutPage />
+      </>
+    );
+  }
   if (entry.slug === "jump-start-plan" || entry.slug === "root-cause-solution") return <PackagePage slug={entry.slug} />;
 
   // Page / condition / lab test
