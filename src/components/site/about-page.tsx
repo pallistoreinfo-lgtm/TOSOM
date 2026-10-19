@@ -45,7 +45,7 @@ export function AboutPage() {
           <div>
             <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-700">Meet Dr. J</p>
             <h1 className="mt-4 text-4xl font-black leading-[1.05] tracking-[-0.04em] text-[#082f52] sm:text-5xl lg:text-6xl">
-              Dr. James D. Krystosik, D.C.
+              James D. Krystosik, D.C.
             </h1>
             <p className="mt-5 text-lg font-bold leading-7 text-emerald-700 sm:text-xl">
               Chiropractor · Functional Medicine Practitioner · Author · Podcast Host

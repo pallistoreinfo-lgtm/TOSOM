@@ -34,7 +34,7 @@ export function DoctorBio() {
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">About the Author</p>
             <h2 id="doctor-profile-heading" className="mt-1 text-xl font-bold text-[#082f52]">
-              Dr. James D. Krystosik, D.C.
+              James D. Krystosik, D.C.
             </h2>
             <p className="mt-1 text-sm font-medium text-slate-600">
               Chiropractor · Functional Medicine Practitioner · Author · Podcast Host
