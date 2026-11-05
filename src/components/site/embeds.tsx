@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { Play } from "lucide-react";
 import { site } from "@/config/site";
 
 /** Calendly inline embed. Lazy-loads the widget script on mount. */
@@ -36,18 +37,34 @@ export function GutQuiz({ id = site.integrations.jotformGutQuizId }: { id?: stri
   );
 }
 
-/** YouTube embed used by migrated article bodies. */
-export function YouTube({ id }: { id: string }) {
+/** YouTube embed used by migrated article bodies, optionally with a custom poster. */
+export function YouTube({ id, thumbnail, title = "YouTube video" }: { id: string; thumbnail?: string; title?: string }) {
+  const [playing, setPlaying] = React.useState(!thumbnail);
+
   return (
-    <div className="my-6 aspect-video w-full overflow-hidden rounded-md">
-      <iframe
-        title="YouTube video"
-        src={`https://www.youtube.com/embed/${id}`}
-        className="h-full w-full"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-        loading="lazy"
-      />
+    <div className="my-6 aspect-video w-full overflow-hidden rounded-md bg-black">
+      {playing ? (
+        <iframe
+          title={title}
+          src={`https://www.youtube.com/embed/${id}${thumbnail ? "?autoplay=1" : ""}`}
+          className="h-full w-full"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          loading="lazy"
+        />
+      ) : (
+        <button
+          type="button"
+          className="group relative h-full w-full"
+          onClick={() => setPlaying(true)}
+          aria-label={`Play ${title}`}
+        >
+          <img src={thumbnail} alt="" className="h-full w-full object-contain" loading="lazy" />
+          <span className="absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-white bg-[#173e5e]/70 text-white shadow-lg transition group-hover:bg-[#07835e]">
+            <Play className="ml-1 h-7 w-7 fill-current" />
+          </span>
+        </button>
+      )}
     </div>
   );
 }

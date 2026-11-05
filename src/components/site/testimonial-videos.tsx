@@ -7,6 +7,7 @@ export type TestimonialVideo = {
   title: string;
   youtubeId: string;
   thumbnail: string;
+  thumbnailFit?: string;
 };
 
 export function TestimonialVideos({ videos }: { videos: TestimonialVideo[] }) {
@@ -16,9 +17,9 @@ export function TestimonialVideos({ videos }: { videos: TestimonialVideo[] }) {
         <Dialog.Root key={video.youtubeId}>
           <Dialog.Trigger asChild>
             <button className="group overflow-hidden rounded-[13px] bg-white text-left shadow-[0_12px_28px_rgba(16,83,111,0.10)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#07835e]" aria-label={`Play ${video.title}`}>
-              <span className="relative block aspect-video overflow-hidden">
+              <span className={`relative block aspect-video overflow-hidden ${video.thumbnailFit === "contain" ? "bg-black" : ""}`}>
                 <img
-                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                  className={`h-full w-full transition-transform duration-300 group-hover:scale-[1.02] ${video.thumbnailFit === "contain" ? "object-contain" : "object-cover"}`}
                   src={video.thumbnail}
                   alt=""
                   loading="lazy"
